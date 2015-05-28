@@ -11,7 +11,7 @@ library(SnowballC)
 library(topicmodels)
 library(slam)
 library(RWeka)
-myCorpus <- Corpus(VectorSource(d$Abstract.Note))
+myCorpus <- Corpus(VectorSource(data$Abstract.Note))
 
 # convert to lower case
 myCorpus <- tm_map(myCorpus, content_transformer(tolower))
