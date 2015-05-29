@@ -1,9 +1,7 @@
-
-
 ### Topic modelng script written as an R function. "k" specifies the number of topics to be modeled. "data" specifies
 #### the bibliographic dataset to be analyzed. To obtain model use this syntax: 'model <- pgrainstopics(.....)
 
-###TO ADD - better duplicate removal, remove search terms from corpus
+###TO ADD - better duplicate removal, progress bar?
 
 n_grams_topics <- function(k,data,seed){  
 
