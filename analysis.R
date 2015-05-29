@@ -15,12 +15,9 @@ for(j in 1:length(all)){
   all[[j]] <- subit(data=d, all.tags[[j]])
 }
 
-### 
-
-
 ### run topic models on all dataframes in list ####
 
-all_topics <- llply(.data=all, .fun=n_grams_topics, k=3,seed=2000)
+all_topics <- llply(.data=all, .fun=nouns_only_n_grams_topics, k=3,seed=2000)
 
 #### Generate most likely terms from all topic models ####
 
