@@ -65,10 +65,17 @@ for(j in 2:4){
                                by="pub_number", sort=F)[,"topic_assign"]
 }}
 
-grain.terms <- makePaddedDataFrame(all_terms[[1]][[1]])
-pp.terms <- makePaddedDataFrame(all_terms[[2]][[1]])
-rice.terms <- makePaddedDataFrame(all_terms[[3]][[1]])
-rye.terms <- makePaddedDataFrame(all_terms[[4]][[1]])
-sorghum.terms <- makePaddedDataFrame(all_terms[[5]][[1]])
-wheat.terms <- makePaddedDataFrame(all_terms[[6]][[1]])
+for(i in 1:length(all_terms)){
+  write.csv(makePaddedDataFrame(all_terms[[i]][[3]]), 
+            file=paste(getwd(),"/topic_terms/",names(all_terms)[[i]],"_top_terms.csv",sep=""))
+}
+
+for(i in 1:length(all)){
+  dx <- all[[i]]
+  dx.tag <- names(all)[[i]]
+  dx$topic.assign <- dx$Gibbs_assign
+  source("graphs.R")
+}
+
+
 
