@@ -6,7 +6,8 @@ source("tags.R")
 ### read in data and recompile into a large list of dataframes for each crop ####
 
 d <- read.csv("Zotero_db_dups_removed.csv")
-all <- rep( list(data.frame()), 7 ) 
+
+all <- rep( list(data.frame()), 6) 
 names(all) <- crop.names
 
 for(j in 1:length(all)){
@@ -20,7 +21,7 @@ all_topics <- llply(.data=all, .fun=n_grams_topics, k=3,seed=2000)
 
 #### Generate most likely terms from all topic models ####
 
-all_terms <- rep( list(list()), 7 ) 
+all_terms <- rep( list(list()), 6 ) 
 names(all_terms) <- names(all_topics)
 
 for(i in 1:length(all_terms)){
@@ -32,8 +33,9 @@ for(i in 1:length(all_terms)){
 
 ### assign papers to topics for all crops and all models 
 
-topic_assign_all <- rep(list(list()), 7 )
+topic_assign_all <- rep(list(list()), 6)
 names(topic_assign_all) <- crop.names
+
 
 for(i in 1:length(all_topics)){ 
 for(j in 1:4){
@@ -47,6 +49,21 @@ names(topic_assign_all[[i]]) <- names(all_topics[[i]])
 }
 
 
+for(i in 1:length(all)){
+  all[[i]]$pub_number <- row.names(all[[i]])  
+  all[[i]] <- merge(all[[i]],topic_assign_all[[i]][[1]][,c("pub_number","topic_assign")], 
+                    by="pub_number", sort=F)
+  names(all[[i]])[names(all[[i]])=="topic_assign"] <- "VEM_assign"}
+
+for(i in 1:length(all)){
+for(j in 2:4){  
+  all[[i]]$VEM_fixed_assign <- merge(all[[i]],topic_assign_all[[i]][[j]][,c("pub_number","topic_assign")], 
+                                     by="pub_number", sort=F)[,"topic_assign"]  
+  all[[i]]$Gibbs_assign <- merge(all[[i]],topic_assign_all[[i]][[j]][,c("pub_number","topic_assign")], 
+                                 by="pub_number", sort=F)[,"topic_assign"]
+  all[[i]]$CTM_assign <- merge(all[[i]],topic_assign_all[[i]][[j]][,c("pub_number","topic_assign")], 
+                               by="pub_number", sort=F)[,"topic_assign"]
+}}
 
 
 

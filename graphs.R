@@ -1,10 +1,12 @@
-dx.topic.hist <-ggplot(data=dx.topic.count,aes(y=freq))+
-  geom_bar(aes(x=topic_assign),fill="grey", color="black", stat="identity")+
-  ylab("")+
-  xlab("")
-dx.topic.hist
+library(reshape2)
+library(plyr)
+library(stringr)
+library(ggplot2)
+library(grid)
+library(fields)
 
-dx$topic.assign <- topic_assign$topic_assign
+dx <- all[[2]]
+dx$topic.assign <- dx$Gibbs_assign
 
 
 ### topic assignment histograms over time #####
