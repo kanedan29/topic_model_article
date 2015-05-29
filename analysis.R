@@ -1,3 +1,4 @@
+options(java.parameters="-Xmx3g")
 setwd("~/Documents/P_grains/GITHUB/topic_model_article/")
 library(plyr)
 source("custom_functions.R")
@@ -13,6 +14,8 @@ names(all) <- crop.names
 for(j in 1:length(all)){
   all[[j]] <- subit(data=d, all.tags[[j]])
 }
+
+### 
 
 
 ### run topic models on all dataframes in list ####
