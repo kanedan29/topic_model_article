@@ -5,8 +5,6 @@ library(ggplot2)
 library(grid)
 library(fields)
 
-dx <- all[[2]]
-dx$topic.assign <- dx$Gibbs_assign
 
 
 ### topic assignment histograms over time #####
@@ -29,13 +27,16 @@ topic.year <- ggplot(data=dx.topic.time, aes(x=year,y=count,group=topic, fill=to
 topic.year
 
 ##### METADATA GRAPHS #######
-dx.year <- count(dx, vars=c("Publication.Year", "topic.assign"))
+dx.topic.count <- count(dx, vars=c("topic.assign"))
 
-dx.year.topic.line <- ggplot(data=dx.year, aes(Publication.Year, fill=topic.assign))+
-  geom_bar(position="dodge", binwidth=5)+
-  ylab("Count")+
+dx.topic.hist <-ggplot(data=dx.topic.count,aes(y=freq))+
+  geom_bar(aes(x=topic.assign),fill="grey", color="black", stat="identity")+
+  ylab("")+
   xlab("")
-dx.year.topic.line
+dx.topic.hist
+
+
+dx.year <- count(dx, vars=c("Publication.Year"))
 
 
 dx.year.line <- ggplot(data=dx.year[dx.year$Publication.Year >= 1900,], aes(x=Publication.Year, y=freq))+
@@ -44,7 +45,13 @@ dx.year.line <- ggplot(data=dx.year[dx.year$Publication.Year >= 1900,], aes(x=Pu
   xlab("")
 dx.year.line
 
-year.hist <- hist(dx.year$Publication.Year, breaks=seq(1900,2010,by=10))
+dx.year.bar <- ggplot(data=dx.year[dx.year$Publication.Year >= 1900,], aes(x=Publication.Year, y=freq))+
+  geom_bar(stat="identity")+
+  ylab("Count")+
+  xlab("")
+dx.year.bar
+
+
 
 dx.journal <- count(dx, vars="Publication.Title")
 dx.journal <- as.data.frame(dx.journal[order(-dx.journal$freq,dx.journal$Publication.Title),])
@@ -62,3 +69,6 @@ dx.journal.hist
 ggsave(dx.topic.hist,file=paste(getwd(),"/figures/",dx.tag,"_topic_hist.pdf",sep=""))
 ggsave(dx.journal.hist,file=paste(getwd(),"/figures/",dx.tag,"_journal_hist.pdf",sep=""))
 ggsave(dx.year.line,file=paste(getwd(),"/figures/",dx.tag,"_year_line.pdf",sep=""))
+ggsave(dx.year.bar,file=paste(getwd(),"/figures/",dx.tag,"_year_bar.pdf",sep=""))
+ggsave(topic.year,file=paste(getwd(),"/figures/",dx.tag,"_topic_year.pdf",sep=""))
+
