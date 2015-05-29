@@ -17,7 +17,7 @@ for(j in 1:length(all)){
 
 ### run topic models on all dataframes in list ####
 
-all_topics <- llply(.data=all, .fun=nouns_only_n_grams_topics, k=3,seed=2000)
+all_topics <- llply(.data=all, .fun=nouns_adj_only_n_grams_topics, k=3,seed=2000)
 
 #### Generate most likely terms from all topic models ####
 
@@ -65,6 +65,10 @@ for(j in 2:4){
                                by="pub_number", sort=F)[,"topic_assign"]
 }}
 
-
-
+grain.terms <- makePaddedDataFrame(all_terms[[1]][[1]])
+pp.terms <- makePaddedDataFrame(all_terms[[2]][[1]])
+rice.terms <- makePaddedDataFrame(all_terms[[3]][[1]])
+rye.terms <- makePaddedDataFrame(all_terms[[4]][[1]])
+sorghum.terms <- makePaddedDataFrame(all_terms[[5]][[1]])
+wheat.terms <- makePaddedDataFrame(all_terms[[6]][[1]])
 
