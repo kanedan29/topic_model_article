@@ -1,6 +1,6 @@
 ## Packages
-# install.packages("VennDiagram")
-require("VennDiagram")
+# install.packages("venneuler")
+require("venneuler")
 
 ## Import Data
 
@@ -42,15 +42,14 @@ n23 <- length(n23)
 n123 <- d[grep("(?=.*ScienceDirect)(?=.*AGRICOLA)(?=.*WOS)", d, perl=T)]
 n123 <- length(n123)
 
-## Plot
+## Create the Graph
+v <- venneuler(c(A=areas[1], B=areas[2], C=areas[3],
+                 `A&B`=n12,`A&C`=n13,`B&C`=n23,`A&B&C`=n123)
+               )              
+v$labels <- c("AGRICOLA","ScienceDirect","Web of Science")
+
+## Create the Plot
 
 pdf("databases.pdf")
-draw.triple.venn(area1= areas[1],
-                 area2= areas[2],
-                 area3= areas[3],
-                 n12= n12,
-                 n13= n13,
-                 n23= n23,
-                 n123= n123
-                 )
+plot(v)
 dev.off()
