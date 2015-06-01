@@ -10,7 +10,7 @@ d <- as.character(read.csv("Zotero_db_dups_removed.csv")$Manual.Tags)
 
 d <- d[grep("AGRICOLA|ScienceDirect|WOS", d)]
 
-## Select area counts
+## Area counts
 
 areas <- c()
 
@@ -22,22 +22,22 @@ for (i in c("AGRICOLA","ScienceDirect","WOS")){
                )
 }
 
-## Select n12 counts
+## n12 counts
 
 n12 <- d[grep("(?=.*AGRICOLA)(?=.*ScienceDirect)", d, perl=T)]
 n12 <- length(n12)
 
-## Select n13 counts
+## n13 counts
 
 n13 <- d[grep("(?=.*AGRICOLA)(?=.*WOS)", d, perl=T)]
 n13 <- length(n13)
 
-## Select n23 counts
+## n23 counts
 
 n23 <- d[grep("(?=.*ScienceDirect)(?=.*WOS)", d, perl=T)]
 n23 <- length(n23)
 
-## Select n123
+## n123 counts
 
 n123 <- d[grep("(?=.*ScienceDirect)(?=.*AGRICOLA)(?=.*WOS)", d, perl=T)]
 n123 <- length(n123)
