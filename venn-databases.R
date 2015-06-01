@@ -6,9 +6,10 @@ require("venneuler")
 
 d <- as.character(read.csv("Zotero_db_dups_removed.csv")$Manual.Tags)
 
-## Remove empty tags
+## Remove empty tags, and cassava articles
 
 d <- d[grep("AGRICOLA|ScienceDirect|WOS", d)]
+d <- d[grep("cassava|manihot", d, invert=T)]
 
 ## Area counts
 
@@ -50,6 +51,6 @@ v$labels <- c("AGRICOLA","ScienceDirect","Web of Science")
 
 ## Create the Plot
 
-pdf("databases.pdf")
+pdf("venn-databases.pdf")
 plot(v)
 dev.off()
