@@ -1,7 +1,8 @@
 ## Packages
 ## install.packages("VennDiagram")
-
+## install.packages("RColorBrewer")
 require("VennDiagram")
+require("RColorBrewer")
 
 ## Import Data
 
@@ -15,6 +16,11 @@ for (i in c("AGRICOLA","ScienceDirect","Scopus","WOS")){
                            paste(i,"\n","(",length(d[grep(i, d)]),")",sep=""))
 }
 
+## Create Color Palette
+
+fill.colors <- brewer.pal(4, "Accent")
+
+
 ## Create the Graphs
 
 v.quint <- venn.diagram(
@@ -27,11 +33,13 @@ v.quint <- venn.diagram(
     fontfamily = "sans",
     cat.fontfamily = "sans",
     category.names = cat.names,
-    force.unique = TRUE,
+    fill = fill.colors,
+    alpha = .4,
+    col = "darkgray"
     )
 
 ## Create the Plot
 
-pdf("venn-databases-four-way.pdf")
+pdf("venn-databases.pdf")
 grid.draw(v.quint)
 dev.off()
