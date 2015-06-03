@@ -11,7 +11,7 @@ d <- as.character(read.csv("P_grain_biblio_paper_database.csv")$Manual.Tags)
 ## Create Category Names
 
 cat.names <- c()
-for (i in c("AGRICOLA","ScienceDirect","Scopus","WOS")){
+for (i in c("AGRICOLA","ScienceDirect","Scopus","Web of Science")){
     cat.names <- cbind(cat.names,
                            paste(i,"\n","(",length(d[grep(i, d)]),")",sep=""))
 }
@@ -27,7 +27,7 @@ v.quint <- venn.diagram(
     list(A= grep("AGRICOLA",d),
          B= grep("ScienceDirect",d),
          C= grep("Scopus",d),
-         D= grep("WOS",d)
+         D= grep("Web of Science",d)
          ),
     filename=NULL,
     fontfamily = "sans",
