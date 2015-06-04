@@ -1,12 +1,13 @@
 options(java.parameters="-Xmx3g")
 setwd("~/Documents/P_grains/GITHUB/topic_model_article/")
 library(plyr)
+library(reshape2)
 source("custom_functions.R")
-source("tags.R")
+source("tags2.R")
 
 ### read in data and recompile into a large list of dataframes for each crop ####
 
-d <- read.csv("Zotero_db_dups_removed.csv")
+d <- read.csv("P_grains_biblio_6_4_2015.csv")
 
 all <- rep( list(data.frame()), 6) 
 names(all) <- crop.names
@@ -16,7 +17,7 @@ for(j in 1:length(all)){
 }
 
 ### run topic models on all dataframes in list ####
-
+detach("package:ggplot2", unload=TRUE)
 all_topics <- llply(.data=all, .fun=nouns_adj_only_n_grams_topics, k=3,seed=2000)
 
 #### Generate most likely terms from all topic models ####
@@ -65,6 +66,7 @@ for(j in 2:4){
                                by="pub_number", sort=F)[,"topic_assign"]
 }}
 
+
 for(i in 1:length(all_terms)){
   write.csv(makePaddedDataFrame(all_terms[[i]][[3]]), 
             file=paste(getwd(),"/topic_terms/",names(all_terms)[[i]],"_top_terms.csv",sep=""))
@@ -77,5 +79,6 @@ for(i in 1:length(all)){
   source("graphs.R")
 }
 
+save(all, all_terms, all_topics, topic_assign_all, d, file="crops_split_workspace.RData")
 
 
