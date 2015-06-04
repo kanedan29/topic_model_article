@@ -4,17 +4,19 @@ options(java.parameters="-Xmx3g")
 setwd("~/Documents/P_grains/GITHUB/topic_model_article/")
 library(plyr)
 source("custom_functions.R")
-source("tags.R")
+source("tags2.R")
 
 ### read in data and recompile into a large list of dataframes for each crop ####
 
-d <- read.csv("Zotero_db_dups_removed.csv")
+d <- read.csv("P_grains_biblio_6_4_2015.csv")
+
 all <- list(d)
 names(all) <- "crops_combined"
 
 ### run topic models on all dataframes in list ####
-
+detach("package:ggplot2", unload=TRUE)
 all_topics <- llply(.data=all, .fun=nouns_adj_only_n_grams_topics, k=3,seed=2000)
+
 
 #### Generate most likely terms from all topic models ####
 
@@ -76,3 +78,5 @@ for(i in 1:length(all)){
   dx$topic.assign <- dx$Gibbs_assign
   source("graphs.R")
 }
+
+save(all, all_terms, all_topics, topic_assign_all, d, file="crops_combined_workspace.RData")
