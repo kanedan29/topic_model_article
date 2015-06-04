@@ -11,8 +11,8 @@ library(SnowballC)
 library(topicmodels)
 library(slam)
 library(RWeka)
-myCorpus <- Corpus(VectorSource(data$Abstract.Note))
-
+myCorpus <- Corpus(VectorSource(d$Abstract.Note))
+dd <- DocumentTermMatrix(gibbs)
 # convert to lower case
 myCorpus <- tm_map(myCorpus, content_transformer(tolower))
 # remove punctuation & numbers
