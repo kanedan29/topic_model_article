@@ -7,7 +7,7 @@ source("tags2.R")
 
 ### read in data and recompile into a large list of dataframes for each crop ####
 
-d <- read.csv("P_grains_biblio_6_4_2015.csv")
+d <- read.csv("P_grain_biblio_paper_database.csv")
 
 all <- rep( list(data.frame()), 6) 
 names(all) <- crop.names

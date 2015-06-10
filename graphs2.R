@@ -4,83 +4,37 @@ library(stringr)
 library(ggplot2)
 library(grid)
 library(fields)
-
-dx <- all[[1]]
-dx.tag <- names(all)[[1]]
-dx$topic.assign <- dx$Gibbs_assign
-
-### topic assignment histograms over time #####
-years <- cbind(stats.bin(x=dx$Publication.Year[dx$Publication.Year >= 1900], 
-                         y=dx$topic.assign[dx$topic.assign %in% 1],breaks=seq(1900,2020,by=10))[[1]])
-
-dx.topic.time.1 <- cbind(rep(1),as.vector(stats.bin(x=dx$Publication.Year[dx$Publication.Year >= 1900], 
-                                                    y=dx$topic.assign[dx$topic.assign %in% 1],breaks=seq(1900,2020,by=10))[[3]][1,]))
-dx.topic.time.2 <- cbind(rep(2),as.vector(stats.bin(x=dx$Publication.Year[dx$Publication.Year >= 1900], 
-                                                    y=dx$topic.assign[dx$topic.assign %in% 2],breaks=seq(1900,2020,by=10))[[3]][1,]))
-dx.topic.time.3 <- cbind(rep(3),as.vector(stats.bin(x=dx$Publication.Year[dx$Publication.Year >= 1900], 
-                                                    y=dx$topic.assign[dx$topic.assign %in% 3],breaks=seq(1900,2020,by=10))[[3]][1,]))
-
-dx.topic.time <- as.data.frame(cbind(rep(years),rbind(dx.topic.time.1,dx.topic.time.2,dx.topic.time.3)))
-names(dx.topic.time) <- c("Year","Topic","Count")
-dx.topic.time$Topic <- as.factor(dx.topic.time$Topic)
-
-topic.year <- ggplot(data=dx.topic.time, aes(x=Year,y=Count,group=Topic, fill=Topic))+
-  geom_bar(stat="identity", position="dodge")+
-  scale_fill_grey(start=0.3,end=0.7)+
-  ylab("Count")+
-  xlab("")
-topic.year
-
-##### METADATA GRAPHS #######
-dx.topic.count <- count(dx, vars=c("topic.assign"))
-
-dx.topic.hist <-ggplot(data=dx.topic.count,aes(y=freq))+
-  geom_bar(aes(x=topic.assign),fill="grey", color="black", stat="identity")+
-  ylab("Count")+
-  xlab("Topic")
-dx.topic.hist
+library(RColorBrewer)
+library(scales)
 
 
 library(doBy)
+names(all) <- c("Grain","Pigeonpea","Rice","Rye","Sorghum","Wheat")
 dx.year <- ldply(.data=all,.fun=count, vars=c("Publication.Year"))
+dx.year$freq <- as.numeric(dx.year$freq)
 dx.year2 <- split(dx.year,f=cut(dx.year$Publication.Year, breaks=seq(1900,2020,by=10)))
-dx.year3 <- llply(dx.year2[3:12], summaryBy, formula=freq~.id,FUN=sum)
+test <- summaryBy(data=dx.year2[[6]], formula=freq~.id,FUN=sum)
 dx.year3 <- list()
+for(i in 3:length(dx.year2)){
+  dx.year3[[i]] <- summaryBy(data=dx.year2[[i]],formula=freq~.id,FUN=sum)
+}
+dx.year3 <- dx.year3[3:12]
+names(dx.year3) <- c("1920-1930","1930-1940","1940-1950","1950-1960","1960-1970","1970-1980","1980-1990",
+                     "1990-2000","2000-2010","2010-2015")
 
+dx.year4 <- melt(dx.year3)
+fill.colors <- brewer.pal(9, "Greens")[4:9]
 
-
-test2 <- summaryBy(formula=freq~.id, data=test, FUN=sum)
-
-dx.year.line <- ggplot(data=dx.year[dx.year$Publication.Year >= 1900,], aes(x=Publication.Year, y=freq))+
-  geom_line(color="black")+
-  ylab("Count")+
-  xlab("")
-dx.year.line
-
-dx.year.bar <- ggplot(data=dx.year[dx.year$Publication.Year >= 1900,], aes(x=Publication.Year, y=freq, fill=.id))+
+dx.year.bar <- ggplot(data=dx.year4, aes(x=L1,y=value,fill=.id))+
   geom_bar(stat="identity",position="stack")+
-  ylab("Count")+
-  xlab("")
-dx.year.bar
-
-
-
-dx.journal <- count(dx, vars="Publication.Title")
-dx.journal <- as.data.frame(dx.journal[order(-dx.journal$freq,dx.journal$Publication.Title),])
-dx.journal$Publication.Title <- factor(dx.journal$Publication.Title, levels=dx.journal$Publication.Title)
-
-dx.journal.hist <-ggplot(data=dx.journal[1:5,], aes(y=freq))+
-  geom_bar(aes(x=Publication.Title),fill="grey", color="black",stat="identity")+
-  ylab("Count")+
+  scale_fill_manual(values=alpha(fill.colors),
+                    name="Crop")+
+  ylab("")+
   xlab("")+
-  theme(axis.text.x=element_text(angle=325, hjust=0, size=10),
-        plot.margin=unit(x=c(1,1,0,0), units="in"))
-dx.journal.hist
+  theme(axis.text.x=element_text(angle=45, hjust=1,vjust=1,size=10)) 
+dx.year.bar  
 
 
-ggsave(dx.topic.hist,file=paste(getwd(),"/figures/",dx.tag,"_topic_hist.pdf",sep=""))
-ggsave(dx.journal.hist,file=paste(getwd(),"/figures/",dx.tag,"_journal_hist.pdf",sep=""))
-ggsave(dx.year.line,file=paste(getwd(),"/figures/",dx.tag,"_year_line.pdf",sep=""))
-ggsave(dx.year.bar,file=paste(getwd(),"/figures/",dx.tag,"_year_bar.pdf",sep=""))
-ggsave(topic.year,file=paste(getwd(),"/figures/",dx.tag,"_topic_year.pdf",sep=""))
+
+
 

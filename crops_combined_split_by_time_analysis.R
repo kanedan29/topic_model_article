@@ -8,11 +8,12 @@ source("tags2.R")
 
 ### read in data and recompile into a large list of dataframes for each crop ####
 
-d <- read.csv("P_grains_biblio_6_4_2015.csv")
+d <- read.csv("P_grain_biblio_paper_database.csv")
 
-d <- split(d,f=cut(d$Publication.Year, breaks=c(1900,1960,1990,2015)))
+d <- split(d,f=cut(d$Publication.Year, breaks=c(1920,1960,1990,2015)))
 all <- d
-names(all)<- c("1960","1990","2015")
+names(all)<- c("1920-1960","1960-1990","1990-2015")
+
 
 
 ### run topic models on all dataframes in list ####
@@ -34,8 +35,7 @@ names(all_terms) <- names(all_topics)
 
 ### assign papers to topics for all crops and all models 
 
-topic_assign_all <- rep(list(list()), 11)
-
+topic_assign_all <- rep(list(list()), 3)
 names(topic_assign_all) <- names(all_topics)
 
 
@@ -50,9 +50,8 @@ for(i in 1:length(all_topics)){
   names(topic_assign_all[[i]]) <- names(all_topics[[i]])
 }
 
-
 for(i in 1:length(all)){
-  all[[i]]$pub_number <- row.names(all[[i]])  
+  all[[i]]$pub_number <- c(1:length(all[[i]][[1]])) 
   all[[i]] <- merge(all[[i]],topic_assign_all[[i]][[1]][,c("pub_number","topic_assign")], 
                     by="pub_number", sort=F)
   names(all[[i]])[names(all[[i]])=="topic_assign"] <- "VEM_assign"}
