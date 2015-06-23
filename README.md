@@ -1,6 +1,11 @@
 # topic_model_article
 Repository for R scripts related to P-grains bibliometric/topic modeling article.
 
+# Instructions
+
+Within this repository, there are three **analysis scripts that each take the global bibliography divide it differently according to objective then clean the resulting corpora, analyze them for topic models, generate csv files with the most relevant topic terms, and generate graphs utilizing the metadata. These scripts call all other scripts (tags, graphs, custom_functions) to complete their tasks, meaning it's necessary to pull the full repository to replicate analyses. to expedite the editing of individual files such as graphs.R and custom_functions.R, workspaces have been produced for each individual analysis script - load that, then open the script to be edited. To see further description of each individual file, see the annotation at the header. 
+
+
 # Searches
 
 ## Agricola
