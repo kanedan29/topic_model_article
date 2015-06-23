@@ -1,4 +1,4 @@
-### Need to utilize cass.tags to remove cass papers
+## This script analyzes the global bibliography directly without subsetting it into separate libraries.
 
 options(java.parameters="-Xmx3g")
 setwd("~/Documents/P_grains/GITHUB/topic_model_article/")
@@ -66,11 +66,14 @@ for(i in 1:length(all)){
                                  by="pub_number", sort=F)[,"topic_assign"]
   }}
 
+## Generate CSVs that include the top terms for each topic.
 
 for(i in 1:length(all_terms)){
   write.csv(makePaddedDataFrame(all_terms[[i]][[3]]), 
             file=paste(getwd(),"/topic_terms/",names(all_terms)[[i]],"_top_terms.csv",sep=""))
 }
+
+## Generate and save graphs to the WD using the graphs.R script.
 
 for(i in 1:length(all)){
   dx <- all[[i]]
@@ -78,5 +81,8 @@ for(i in 1:length(all)){
   dx$topic.assign <- dx$Gibbs_assign
   source("graphs.R")
 }
+
+## Save workspace to WD
+
 
 save(all, all_terms, all_topics, topic_assign_all, d, file="crops_combined_workspace.RData")
