@@ -1,3 +1,8 @@
+## This script takes the global bibliography then splits it into separate dataframes for each crop that are compiled into
+## a large list. The corresponding workspace is 'Crops_split_workspace.RData'
+
+### Reset java parameters, load libraries, load tags, and load custom functions.
+
 options(java.parameters="-Xmx3g")
 setwd("~/Documents/P_grains/GITHUB/topic_model_article/")
 library(plyr)
@@ -67,10 +72,16 @@ for(j in 2:4){
 }}
 
 
+### Generate csv files that contain most likely terms for each topic
+
+
 for(i in 1:length(all_terms)){
   write.csv(makePaddedDataFrame(all_terms[[i]][[3]]), 
             file=paste(getwd(),"/topic_terms/",names(all_terms)[[i]],"_top_terms.csv",sep=""))
 }
+
+### Generate graphs from the graphs.R script and save to WD. NOTE: graphs2.R generates a better histogram over time graph
+### but cannot be run through this for loop. Simply load the workspace, then run graphs2.R
 
 for(i in 1:length(all)){
   dx <- all[[i]]
@@ -78,6 +89,8 @@ for(i in 1:length(all)){
   dx$topic.assign <- dx$Gibbs_assign
   source("graphs.R")
 }
+
+### Save workspace.
 
 save(all, all_terms, all_topics, topic_assign_all, d, file="crops_split_workspace.RData")
 
