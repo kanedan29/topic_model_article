@@ -84,17 +84,19 @@ for (i in unique(d.df.summary$.id)){
                 coord_flip()
 
     ggsave(g,file=paste(getwd(),"/figures/","publications-",
-                 i,"-flipped",".pdf",sep=""))
+                 i,"-flipped",".pdf",sep=""),
+           width = 7, height = 9.5, units = "in")
 
     g <- ggplot(d.df.summary[d.df.summary$.id == i,],
                 aes(x=Publication, y=Count))+
         geom_bar(stat="identity")+
             facet_grid(. ~ period, scale = "free_x")+
                 theme(axis.text.x = element_text(angle = 45,vjust= 1,hjust=1),
-                      plot.margin = unit(c(0.5,0.5,0.5,2), "cm"))
+                      plot.margin = unit(c(0.5,0.5,0.5,2.5), "cm"))
 
     ggsave(g,file=paste(getwd(),"/figures/","publications-",
-                 i,".pdf",sep=""))
+                 i,".pdf",sep=""),
+           width = 7, height = 9.5, units = "in")
 }
 
 detach(package:ggplot2, unload=T)
