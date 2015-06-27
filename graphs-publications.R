@@ -49,12 +49,11 @@ d.list.summary <- lapply(d.list.summary, ddply, .(period),
                          n.period = length(Publication),
                          n.norm = Count/n.period)
 
-## Flatten, arrange dataframe, and remove incomplete entries
+## Flatten, arrange dataframe
 
 d.df.summary <- ldply(d.list.summary)
 d.df.summary <- arrange(d.df.summary, .id, desc(period), desc(n.norm),
                         Publication)
-d.df.summary <- d.df.summary[complete.cases(d.df.summary),]
 
 ## Select top 10 publications per time period
 
@@ -63,11 +62,13 @@ d.df.summary <- ddply(d.df.summary, .(.id, period), function(x) x[1:10,])
 detach(package:reshape2, unload=T)
 detach(package:plyr, unload=T)
 
-## Wrap names and select complete cases again (not sure more NAs are generated)
+## Wrap names
 
 require(stringr)
 d.df.summary$Publication <- str_wrap(d.df.summary$Publication, width=40)
 detach(package:stringr, unload=T)
+
+## Select complete cases
 
 d.df.summary <- d.df.summary[complete.cases(d.df.summary),]
 
