@@ -28,6 +28,7 @@ d$period[d$year >= 1991 & d$year <= 2015] <- "1991-2015"
 d.list <- list(grain = d[grep("search.grain", d$tags),][,c(2,4)],
                pigeonpea = d[grep("search.pigeonpea", d$tags),][,c(2,4)],
                rice = d[grep("search.rice", d$tags),][,c(2,4)],
+               rye = d[grep("search.rye", d$tags),][,c(2,4)],
                sorghum = d[grep("search.sorghum", d$tags),][,c(2,4)],
                wheat = d[grep("search.wheat", d$tags),][,c(2,4)],
                all = d[,c(2,4)])
@@ -65,7 +66,7 @@ detach(package:plyr, unload=T)
 ## Wrap names and select complete cases again (not sure more NAs are generated)
 
 require(stringr)
-d.df.summary$Publication <- str_wrap(d.df.summary$Publication, width=30)
+d.df.summary$Publication <- str_wrap(d.df.summary$Publication, width=40)
 detach(package:stringr, unload=T)
 
 d.df.summary <- d.df.summary[complete.cases(d.df.summary),]
@@ -85,20 +86,9 @@ for (i in unique(d.df.summary$.id)){
                 coord_flip()
 
     ggsave(g,file=paste(getwd(),"/figures/","publications-",
-                 i,"-flipped",".pdf",sep=""),
-           width = 7, height = 9, units = "in")
-
-    g <- ggplot(d.df.summary[d.df.summary$.id == i,],
-                aes(x=Publication, y=Count))+
-        geom_bar(stat="identity")+
-            facet_grid(. ~ period, scale = "free_x")+
-                theme(axis.text.x = element_text(
-                          angle = 45, vjust= 1, hjust=1, size = 5),
-                      plot.margin = unit(c(0.5,0.5,0.5,1), "cm"))
-
-    ggsave(g,file=paste(getwd(),"/figures/","publications-",
                  i,".pdf",sep=""),
            width = 7, height = 9, units = "in")
+
 }
 
 detach(package:ggplot2, unload=T)
