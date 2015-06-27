@@ -28,9 +28,10 @@ d$period[d$year >= 1991 & d$year <= 2015] <- "1991-2015"
 d.list <- list(grain = d[grep("search.grain", d$tags),][,c(2,4)],
                pigeonpea = d[grep("search.pigeonpea", d$tags),][,c(2,4)],
                rice = d[grep("search.rice", d$tags),][,c(2,4)],
-               rye = d[grep("search.rye", d$tags),][,c(2,4)],
+               rye_wheat = d[sort(
+                   unique(unlist(sapply(c("search.rye", "search.wheat"),
+                                        grep, d$tags), recursive=T))),][,c(2,4)],
                sorghum = d[grep("search.sorghum", d$tags),][,c(2,4)],
-               wheat = d[grep("search.wheat", d$tags),][,c(2,4)],
                all = d[,c(2,4)])
 
 ## Count publications per period,
