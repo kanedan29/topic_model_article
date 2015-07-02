@@ -72,7 +72,7 @@ v.cp <- venn.diagram(
 
 ## Create the Plot
 
-pdf("venn-databases.pdf", width=4.5,height=9)
+pdf("./figures/databases.pdf", width=4.5,height=9)
 pushViewport(viewport(layout = grid.layout(2, 1), height=.85, width=.85))
 pushViewport(viewport(layout.pos.col = 1, layout.pos.row = 1))
 grid.draw(v.db)
