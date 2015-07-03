@@ -19,6 +19,8 @@ d$Publication <- toupper(d$Publication)
 
 ## journal titles per period
 
+require(reshape2)
+
 dates.min <- c(min(d$year), min(d$year)+10*c(1:9)+1)
 dates.max <- c(min(d$year)+10*c(1:9),max(d$year))
 dates <- c(1929+10*c(0:9), max(d$year))
@@ -40,7 +42,6 @@ d.list <- list(grain = d[grep("search.grain", d$tags),][,c(2,4)],
 
 ## Count publications per period
 
-require(reshape2)
 require(plyr)
 
 d.list.summary <- lapply(d.list, ddply, .(period, Publication),
