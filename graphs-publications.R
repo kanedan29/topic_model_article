@@ -26,7 +26,7 @@ dates.min <- c(min(d$year), min(d$year)+30*c(1:2)+1)
 dates.max <- c(min(d$year)+30*c(1:2),max(d$year))
 dates <- c(1929+30*c(0:2), max(d$year))
 
-d.list <- split(d,f=cut(d$year, breaks=dates, labels = paste(dates.min, dates.max, sep= "--")))
+d.list <- split(d,f=cut(d$year, breaks=dates, labels = paste(dates.min, dates.max, sep= "-")))
 d <- ldply(d.list, .id="period")
 
 ## list per crop
@@ -79,7 +79,6 @@ d.df.summary <- d.df.summary[complete.cases(d.df.summary),]
 ## Create Plots
 
 require(ggplot2)
-require(grid)
 
 for (i in unique(d.df.summary$key)){
 
@@ -90,10 +89,9 @@ for (i in unique(d.df.summary$key)){
                 theme(axis.text.y = element_text(size = 7))+
                 coord_flip()
 
-    ggsave(g,file=paste(getwd(),"/figures/","publications-",
+    ggsave(g,file=paste(getwd(),"/figures/","publications-3periods-",
                  i,".pdf",sep=""), width = 7, height = 9, units = "in")
 
 }
 
 detach(package:ggplot2, unload=T)
-detach(package:grid, unload=T)
