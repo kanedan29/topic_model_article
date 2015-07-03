@@ -19,9 +19,13 @@ d$Publication <- toupper(d$Publication)
 
 ## journal titles per period
 
-d$period[d$year <= 1960] <- "1914-1960"
-d$period[d$year >= 1961 & d$year <= 1990] <- "1961-1990"
-d$period[d$year >= 1991 & d$year <= 2015] <- "1991-2015"
+dates.min <- c(min(d$year), min(d$year)+10*c(1:9)+1)
+dates.max <- c(min(d$year)+10*c(1:9),max(d$year))
+dates <- c(1929+10*c(0:9), max(d$year))
+
+d.list <- split(d,f=cut(d$year, breaks=dates, labels = 1:10))
+d <- subset(melt(d.list), select = -variable)
+colnames(d)[3:4] <- c("year", "period")
 
 ## list per crop
 
@@ -34,7 +38,7 @@ d.list <- list(grain = d[grep("search.grain", d$tags),][,c(2,4)],
                sorghum = d[grep("search.sorghum", d$tags),][,c(2,4)],
                all = d[,c(2,4)])
 
-## Count publications per period,
+## Count publications per period
 
 require(reshape2)
 require(plyr)
