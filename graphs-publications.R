@@ -20,29 +20,27 @@ d$Publication <- toupper(d$Publication)
 ## journal titles per period
 
 require(reshape2)
+require(plyr)
 
-dates.min <- c(min(d$year), min(d$year)+10*c(1:9)+1)
-dates.max <- c(min(d$year)+10*c(1:9),max(d$year))
-dates <- c(1929+10*c(0:9), max(d$year))
+dates.min <- c(min(d$year), min(d$year)+30*c(1:2)+1)
+dates.max <- c(min(d$year)+30*c(1:2),max(d$year))
+dates <- c(1929+30*c(0:2), max(d$year))
 
-d.list <- split(d,f=cut(d$year, breaks=dates, labels = 1:10))
-d <- subset(melt(d.list), select = -variable)
-colnames(d)[3:4] <- c("year", "period")
+d.list <- split(d,f=cut(d$year, breaks=dates, labels = paste(dates.min, dates.max, sep= "--")))
+d <- ldply(d.list, .id="period")
 
 ## list per crop
 
-d.list <- list(grain = d[grep("search.grain", d$tags),][,c(2,4)],
-               pigeonpea = d[grep("search.pigeonpea", d$tags),][,c(2,4)],
-               rice = d[grep("search.rice", d$tags),][,c(2,4)],
+d.list <- list(grain = d[grep("search.grain", d$tags),][,c("Publication","period")],
+               pigeonpea = d[grep("search.pigeonpea", d$tags),][,c("Publication","period")],
+               rice = d[grep("search.rice", d$tags),][,c("Publication","period")],
                rye_wheat = d[sort(
                    unique(unlist(sapply(c("search.rye", "search.wheat"),
-                                        grep, d$tags), recursive=T))),][,c(2,4)],
-               sorghum = d[grep("search.sorghum", d$tags),][,c(2,4)],
-               all = d[,c(2,4)])
+                                        grep, d$tags), recursive=T))),][,c("Publication","period")],
+               sorghum = d[grep("search.sorghum", d$tags),][,c("Publication","period")],
+               all = d[,c("Publication","period")])
 
 ## Count publications per period
-
-require(plyr)
 
 d.list.summary <- lapply(d.list, ddply, .(period, Publication),
                          summarise,
@@ -57,13 +55,13 @@ d.list.summary <- lapply(d.list.summary, ddply, .(period),
 
 ## Flatten, arrange dataframe
 
-d.df.summary <- ldply(d.list.summary)
-d.df.summary <- arrange(d.df.summary, .id, desc(period), desc(n.norm),
+d.df.summary <- ldply(d.list.summary, .id="key")
+d.df.summary <- arrange(d.df.summary, key, desc(period), desc(n.norm),
                         Publication)
 
 ## Select top 10 publications per time period
 
-d.df.summary <- ddply(d.df.summary, .(.id, period), function(x) x[1:10,])
+d.df.summary <- ddply(d.df.summary, .(key, period), function(x) x[1:10,])
 
 detach(package:reshape2, unload=T)
 detach(package:plyr, unload=T)
@@ -83,9 +81,9 @@ d.df.summary <- d.df.summary[complete.cases(d.df.summary),]
 require(ggplot2)
 require(grid)
 
-for (i in unique(d.df.summary$.id)){
+for (i in unique(d.df.summary$key)){
 
-    g <- ggplot(d.df.summary[d.df.summary$.id == i,],
+    g <- ggplot(d.df.summary[d.df.summary$key == i,],
                 aes(x=Publication, y=Count))+
         geom_bar(stat="identity")+
             facet_grid(. ~ period, scale = "free_y")+
@@ -93,8 +91,7 @@ for (i in unique(d.df.summary$.id)){
                 coord_flip()
 
     ggsave(g,file=paste(getwd(),"/figures/","publications-",
-                 i,".pdf",sep=""),
-           width = 7, height = 9, units = "in")
+                 i,".pdf",sep=""), width = 7, height = 9, units = "in")
 
 }
 
