@@ -9,7 +9,7 @@ library(scales)
 
 
 library(doBy)
-names(all) <- c("Grain","Pigeonpea","Rice","Rye","Sorghum","Wheat")
+names(all) <- c("Perennial Grains","Pigeonpea","Rice","Rye","Sorghum","Wheat")
 dx.year <- ldply(.data=all,.fun=count, vars=c("Publication.Year"))
 dx.year$freq <- as.numeric(dx.year$freq)
 dx.year2 <- split(dx.year,f=cut(dx.year$Publication.Year, breaks=seq(1900,2020,by=10)))
@@ -23,18 +23,15 @@ names(dx.year3) <- c("1920-1930","1930-1940","1940-1950","1950-1960","1960-1970"
                      "1990-2000","2000-2010","2010-2015")
 
 dx.year4 <- melt(dx.year3)
-fill.colors <- brewer.pal(9, "Greens")[4:9]
+fill.colors <- brewer.pal(6, "Greens")
 
 dx.year.bar <- ggplot(data=dx.year4, aes(x=L1,y=value,fill=.id))+
   geom_bar(stat="identity",position="stack")+
   scale_fill_manual(values=alpha(fill.colors),
-                    name="Crop")+
+                    name="")+
   ylab("")+
   xlab("")+
   theme(axis.text.x=element_text(angle=45, hjust=1,vjust=1,size=10)) 
-dx.year.bar  
 
-
-
-
-
+ggsave(dx.year.bar,file=paste(getwd(),"/figures/","publications-histogram-all.pdf",sep=""))
+dev.off()
