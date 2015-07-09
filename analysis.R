@@ -4,7 +4,6 @@
 ### Reset java parameters, load libraries, load tags, and load custom functions.
 
 options(java.parameters="-Xmx3g")
-setwd("~/Documents/P_grains/GITHUB/topic_model_article/")
 library(plyr)
 library(reshape2)
 source("custom_functions.R")
@@ -80,15 +79,9 @@ for(i in 1:length(all_terms)){
             file=paste(getwd(),"/topic_terms/",names(all_terms)[[i]],"_top_terms.csv",sep=""))
 }
 
-### Generate graphs from the graphs.R script and save to WD. NOTE: graphs2.R generates a better histogram over time graph
-### but cannot be run through this for loop. Simply load the workspace, then run graphs2.R
+### Generate graphs from the graphs.R script and save to WD.
 
-for(i in 1:length(all)){
-  dx <- all[[i]]
-  dx.tag <- names(all)[[i]]
-  dx$topic.assign <- dx$Gibbs_assign
-  source("graphs.R")
-}
+source("graphs.R")
 
 ### Save workspace.
 
