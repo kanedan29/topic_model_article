@@ -61,7 +61,7 @@ d.df.summary <- ldply(d.list.summary, .id="key")
 d.df.summary <- arrange(d.df.summary, key, desc(period), desc(n.norm),
                         Publication)
 
-## Select top 5 publications per time period
+## Select top 4 publications per time period
 
 d.df.summary <- ddply(d.df.summary, .(key, period), function(x) x[1:4,])
 
@@ -83,7 +83,10 @@ d.df.summary <- d.df.summary[complete.cases(d.df.summary),]
 require(ggplot2)
 
 for (i in unique(d.df.summary$key)){
-
+    ifelse(round(max(d.df.summary[d.df.summary$key == i,]$Count), -1) >=
+        max(d.df.summary[d.df.summary$key == i,]$Count), 
+        lim <- c(0, round(max(d.df.summary[d.df.summary$key == i,]$Count), -1)),
+        lim <- c(0, max(d.df.summary[d.df.summary$key == i,]$Count), -1))
     g <- ggplot(d.df.summary[d.df.summary$key == i,],
                 aes(x=Publication, y=Count))+
         geom_bar(stat="identity")+
@@ -91,8 +94,7 @@ for (i in unique(d.df.summary$key)){
                 theme(axis.text.y = element_text(size = 7, hjust = 1),
                       axis.text.x = element_text(hjust = c(0,1)))+
                     scale_y_continuous(
-                        breaks= c(0,
-                            max(d.df.summary[d.df.summary$key == i,]$Count)))+
+                        limits = lim, breaks = lim)+
                         coord_flip()
 
     ggsave(g,file=paste(getwd(),"/figures/","publications-decades-",
