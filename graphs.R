@@ -12,11 +12,11 @@ library(scales)
 years <- c("1920-1930","1930-1940","1940-1950","1950-1960","1960-1970","1970-1980","1980-1990",
                      "1990-2000","2000-2010","2010-2015")
 
-dx.topic.time.1 <- cbind(rep(1),as.vector(stats.bin(x=dx$Publication.Year[dx$Publication.Year >= 1920], 
+dx.topic.time.1 <- cbind(rep(labels[1]),as.vector(stats.bin(x=dx$Publication.Year[dx$Publication.Year >= 1920], 
                                                     y=dx$topic.assign[dx$topic.assign %in% 1],breaks=seq(1920,2020,by=10))[[3]][1,]))
-dx.topic.time.2 <- cbind(rep(2),as.vector(stats.bin(x=dx$Publication.Year[dx$Publication.Year >= 1920], 
+dx.topic.time.2 <- cbind(rep(labels[2]),as.vector(stats.bin(x=dx$Publication.Year[dx$Publication.Year >= 1920], 
                                                     y=dx$topic.assign[dx$topic.assign %in% 2],breaks=seq(1920,2020,by=10))[[3]][1,]))
-dx.topic.time.3 <- cbind(rep(3),as.vector(stats.bin(x=dx$Publication.Year[dx$Publication.Year >= 1920], 
+dx.topic.time.3 <- cbind(rep(labels[3]),as.vector(stats.bin(x=dx$Publication.Year[dx$Publication.Year >= 1920], 
                                                     y=dx$topic.assign[dx$topic.assign %in% 3],breaks=seq(1920,2020,by=10))[[3]][1,]))
 
 dx.topic.time <- as.data.frame(cbind(rep(years),rbind(dx.topic.time.1,dx.topic.time.2,dx.topic.time.3)))
@@ -30,8 +30,10 @@ topic.year <- ggplot(data=dx.topic.time, aes(x=Year,y=Count,group=Topic, fill=To
   scale_fill_grey(start=0.3,end=0.7)+
   ylab("Count")+
   xlab("")+
-  theme(axis.text.x=element_text(angle=45, hjust=1,vjust=1,size=10)) +
+  theme(axis.text.x=element_text(angle=45, hjust=1,vjust=1,size=10), legend.key.height = unit(1, "in")) +
+  guides(fill=guide_legend(title="Selected\nTopic Terms"))+
   scale_y_continuous(breaks=pretty_breaks())
+
 topic.year
 
 ##### METADATA GRAPHS #######
