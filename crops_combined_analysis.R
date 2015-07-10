@@ -1,7 +1,6 @@
 ## This script analyzes the global bibliography directly without subsetting it into separate libraries.
 
 options(java.parameters="-Xmx3g")
-setwd("~/Documents/P_grains/GITHUB/topic_model_article/")
 library(plyr)
 source("custom_functions.R")
 source("tags2.R")
@@ -76,11 +75,23 @@ for(i in 1:length(all_terms)){
 ## Generate and save graphs to the WD using the graphs.R script.
 
 for(i in 1:length(all)){
-  dx <- all[[i]]
-  dx.tag <- names(all)[[i]]
-  dx$topic.assign <- dx$Gibbs_assign
-  source("graphs.R")
-}
+        dx <- all[[i]]
+        dx.tag <- names(all)[[i]]
+        dx$topic.assign <- dx$Gibbs_assign
+        labels <- c()
+        for (j in 1:3){
+            labels <- rbind(labels,
+                            paste(
+                                paste("TOPIC", j, sep = " "),
+                                all_terms[[i]][[3]][[j]][1],
+                                all_terms[[i]][[3]][[j]][2],
+                                all_terms[[i]][[3]][[j]][3],
+                                all_terms[[i]][[3]][[j]][4],
+                                all_terms[[i]][[3]][[j]][5],
+                                sep = "\n"))
+        }
+#        source("graphs.R")
+    }
 
 ## Save workspace to WD
 
