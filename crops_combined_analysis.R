@@ -90,10 +90,9 @@ for(i in 1:length(all)){
                                 all_terms[[i]][[3]][[j]][5],
                                 sep = "\n"))
         }
-#        source("graphs.R")
+        source("graphs.R")
     }
 
 ## Save workspace to WD
-
 
 save(all, all_terms, all_topics, topic_assign_all, d, file="crops_combined_workspace.RData")
