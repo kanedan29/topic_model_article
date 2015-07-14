@@ -1,7 +1,6 @@
 ### This script splits the global bibliography into separate libraries for three different time periods and then analyzes each
 
 options(java.parameters="-Xmx3g")
-setwd("~/Documents/P_grains/GITHUB/topic_model_article/")
 library(plyr)
 source("custom_functions.R")
 source("tags2.R")
@@ -30,8 +29,6 @@ for(i in 1:length(all_topics)){
 }
 
 names(all_terms) <- names(all_topics)
-
-#lapply(top.terms, write, file=paste(getwd(),"/figures/",dx.tag,"_topic_terms.txt",sep=""), append=T, ncolumns=1000)
 
 ### assign papers to topics for all crops and all models 
 
@@ -79,9 +76,20 @@ for(i in 1:length(all)){
   dx <- all[[i]]
   dx.tag <- names(all)[[i]]
   dx$topic.assign <- dx$Gibbs_assign
+  labels <-c()
+  for (j in 1:3){
+      labels <- rbind(labels,
+                      paste(
+                          paste("TOPIC", j, sep = " "),
+                          all_terms[[i]][[3]][[j]][1],
+                          all_terms[[i]][[3]][[j]][2],
+                          all_terms[[i]][[3]][[j]][3],
+                          all_terms[[i]][[3]][[j]][4],
+                          all_terms[[i]][[3]][[j]][5],
+                          sep = "\n"))
+        }
   source("graphs.R")
 }
-
 
  ## Save workspace to WD.
 
