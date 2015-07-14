@@ -33,5 +33,5 @@ dx.year.bar <- ggplot(data=dx.year4, aes(x=L1,y=value,fill=.id))+
   xlab("")+
   theme(axis.text.x=element_text(angle=45, hjust=1,vjust=1,size=10)) 
 
-ggsave(dx.year.bar,file=paste(getwd(),"/figures/","publications-histogram-all.pdf",sep=""))
+ggsave(dx.year.bar,file=paste(getwd(),"/figures/","publications-stacked-all.pdf",sep=""))
 dev.off()
