@@ -9,11 +9,9 @@ source("tags2.R")
 
 d <- read.csv("P_grain_biblio_paper_database.csv")
 
-d <- split(d,f=cut(d$Publication.Year, breaks=c(1920,1960,1990,2015)))
+d <- split(d,f=cut(d$Publication.Year, breaks=c(1930,1960,1990,2020)))
 all <- d
-names(all)<- c("1920-1960","1960-1990","1990-2015")
-
-
+names(all)<- c("1930-1959","1960-1989","1990-2015")
 
 ### run topic models on all dataframes in list ####
 detach("package:ggplot2", unload=TRUE)
@@ -73,22 +71,24 @@ for(i in 1:length(all_terms)){
 ## Generate and save graphs using graphs.R script
 
 for(i in 1:length(all)){
-  dx <- all[[i]]
-  dx.tag <- names(all)[[i]]
-  dx$topic.assign <- dx$Gibbs_assign
-  labels <-c()
-  for (j in 1:3){
-      labels <- rbind(labels,
-                      paste(
-                          paste("TOPIC", j, sep = " "),
-                          all_terms[[i]][[3]][[j]][1],
-                          all_terms[[i]][[3]][[j]][2],
-                          all_terms[[i]][[3]][[j]][3],
-                          all_terms[[i]][[3]][[j]][4],
-                          all_terms[[i]][[3]][[j]][5],
-                          sep = "\n"))
-        }
-  source("graphs.R")
+    dx <- all[[i]]
+    dx.tag <- names(all)[[i]]
+    dx$topic.assign <- dx$Gibbs_assign
+    dx$decade <- round_any(dx$Publication.Year,10, f=floor)
+    labels.decades <- paste(sort(unique(dx$decade)),sort(unique(dx$decade))+9, sep = "-")
+    labels.terms <-c()
+    for (j in 1:3){
+        labels.terms <- rbind(labels.terms,
+                              paste(
+                                  paste("TOPIC", j, sep = " "),
+                                  all_terms[[i]][[3]][[j]][1],
+                                  all_terms[[i]][[3]][[j]][2],
+                                  all_terms[[i]][[3]][[j]][3],
+                                  all_terms[[i]][[3]][[j]][4],
+                                  all_terms[[i]][[3]][[j]][5],
+                                  sep = "\n"))
+    }
+    source("graphs.R")
 }
 
  ## Save workspace to WD.
