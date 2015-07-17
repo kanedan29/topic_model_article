@@ -9,29 +9,34 @@ library(scales)
  
 ## Topic histogram per decade
 
-years <- c("1920-1930","1930-1940","1940-1950","1950-1960","1960-1970","1970-1980","1980-1990",
-           "1990-2000","2000-2010","2010-2015")
-
-dx.topic.time.1 <- cbind(rep(labels[1]),
-                         as.vector(stats.bin(x=dx$Publication.Year[dx$Publication.Year >= 1920], 
+dx.topic.time.1 <- cbind(rep(labels.terms[1]),
+                         as.vector(stats.bin(x=dx$decade, 
                                              y=dx$topic.assign[dx$topic.assign %in% 1],
-                                             breaks=seq(1920,2020,by=10))[[3]][1,]))
-dx.topic.time.2 <- cbind(rep(labels[2]),
-                         as.vector(stats.bin(x=dx$Publication.Year[dx$Publication.Year >= 1920], 
+                                             breaks=seq(
+                                                 min(dx$decade),
+                                                 max(dx$decade)+10,
+                                                 by=10))[[3]][1,]))
+dx.topic.time.2 <- cbind(rep(labels.terms[2]),
+                         as.vector(stats.bin(x=dx$decade, 
                                              y=dx$topic.assign[dx$topic.assign %in% 2],
-                                             breaks=seq(1920,2020,by=10))[[3]][1,]))
-dx.topic.time.3 <- cbind(rep(labels[3]),
-                         as.vector(stats.bin(x=dx$Publication.Year[dx$Publication.Year >= 1920], 
+                                             breaks=seq(
+                                                 min(dx$decade),
+                                                 max(dx$decade)+10,
+                                                 by=10))[[3]][1,]))
+dx.topic.time.3 <- cbind(rep(labels.terms[3]),
+                         as.vector(stats.bin(x=dx$decade, 
                                              y=dx$topic.assign[dx$topic.assign %in% 3],
-                                             breaks=seq(1920,2020,by=10))[[3]][1,]))
-
-dx.topic.time <- as.data.frame(cbind(rep(years),
+                                             breaks=seq(
+                                                 min(dx$decade),
+                                                 max(dx$decade)+10,
+                                                 by=10))[[3]][1,]))
+dx.topic.time <- as.data.frame(cbind(rep(labels.decades),
                                      rbind(dx.topic.time.1,dx.topic.time.2,dx.topic.time.3)))
-names(dx.topic.time) <- c("Year","Topic","Count")
+names(dx.topic.time) <- c("Decade","Topic","Count")
 dx.topic.time$Topic <- as.factor(dx.topic.time$Topic)
 dx.topic.time$Count <- as.numeric(dx.topic.time$Count)
 
-topic.decades <- ggplot(data=dx.topic.time, aes(x=Year,y=Count,group=Topic, fill=Topic))+
+topic.decades <- ggplot(data=dx.topic.time, aes(x=Decade, y=Count, group=Topic, fill=Topic))+
     geom_bar(stat="identity", position="dodge")+
         scale_fill_grey(start=0.3,end=0.7)+
             ylab("Count")+
@@ -46,10 +51,10 @@ topic.decades <- ggplot(data=dx.topic.time, aes(x=Year,y=Count,group=Topic, fill
 dx.topic.count <- count(dx, vars=c("topic.assign"))
 dx.topic.count$freq <- as.numeric(dx.topic.count$freq)
 for (i in 1:3){
-    dx.topic.count$labels[dx.topic.count$topic.assign == i] <- labels[i]
+    dx.topic.count$labels.terms[dx.topic.count$topic.assign == i] <- labels.terms[i]
 }
 
-dx.topic.hist <-ggplot(data=dx.topic.count,aes(y=freq, x=labels))+
+dx.topic.hist <-ggplot(data=dx.topic.count,aes(y=freq, x=labels.terms))+
     geom_bar(stat="identity")+
         ylab("Count")+
             xlab("Topic and Associated Terms")+
