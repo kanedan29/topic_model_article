@@ -1,6 +1,6 @@
+library(stringr)
 library(reshape2)
 library(plyr)
-library(stringr)
 library(ggplot2)
 library(grid)
 library(fields)
@@ -9,55 +9,28 @@ library(scales)
  
 ## Topic histogram per decade
 
-dx.topic.time.1 <- cbind(rep(labels.terms[1]),
-                         as.vector(stats.bin(x=dx$decade, 
-                                             y=dx$topic.assign[dx$topic.assign %in% 1],
-                                             breaks=seq(
-                                                 min(dx$decade),
-                                                 max(dx$decade)+10,
-                                                 by=10))[[3]][1,]))
-dx.topic.time.2 <- cbind(rep(labels.terms[2]),
-                         as.vector(stats.bin(x=dx$decade, 
-                                             y=dx$topic.assign[dx$topic.assign %in% 2],
-                                             breaks=seq(
-                                                 min(dx$decade),
-                                                 max(dx$decade)+10,
-                                                 by=10))[[3]][1,]))
-dx.topic.time.3 <- cbind(rep(labels.terms[3]),
-                         as.vector(stats.bin(x=dx$decade, 
-                                             y=dx$topic.assign[dx$topic.assign %in% 3],
-                                             breaks=seq(
-                                                 min(dx$decade),
-                                                 max(dx$decade)+10,
-                                                 by=10))[[3]][1,]))
-dx.topic.time <- as.data.frame(cbind(rep(labels.decades),
-                                     rbind(dx.topic.time.1,dx.topic.time.2,dx.topic.time.3)))
-names(dx.topic.time) <- c("Decade","Topic","Count")
+dx.topic.time <- count(dx, vars=.(Decade,Topic))
+dx.topic.time$Decade <- as.character(dx.topic.time$Decade)
 dx.topic.time$Topic <- as.factor(dx.topic.time$Topic)
-dx.topic.time$Count <- as.numeric(dx.topic.time$Count)
 
-topic.decades <- ggplot(data=dx.topic.time, aes(x=Decade, y=Count, group=Topic, fill=Topic))+
+
+topic.decades <- ggplot(data=dx.topic.time, aes(x=Decade, y=freq, group=Topic, fill=Topic))+
     geom_bar(stat="identity", position="dodge")+
         scale_fill_grey(start=0.3,end=0.7)+
             ylab("Count")+
-                xlab("")+
-                    theme(axis.text.x=element_text(angle=45, hjust=1,vjust=1,size=10),
-                          legend.key.height = unit(1, "in")) +
-                        guides(fill=guide_legend(title="Selected\nTopic Terms"))+
-                            scale_y_continuous(breaks=pretty_breaks())
+                theme(axis.text.x=element_text(angle=45, hjust=1,vjust=1,size=10),
+                      legend.key.height = unit(1, "in")) +
+                    guides(fill=guide_legend(title="Selected\nTopic Terms"))+
+                        scale_y_continuous(breaks=pretty_breaks())
 
 ## Overall topic counts
 
-dx.topic.count <- count(dx, vars=c("topic.assign"))
-dx.topic.count$freq <- as.numeric(dx.topic.count$freq)
-for (i in 1:3){
-    dx.topic.count$labels.terms[dx.topic.count$topic.assign == i] <- labels.terms[i]
-}
+dx.topic.count <- count(dx, vars=.(Topic))
 
-dx.topic.hist <-ggplot(data=dx.topic.count,aes(y=freq, x=labels.terms))+
+dx.topic.hist <-ggplot(data=dx.topic.count,aes(y=freq, x=Topic))+
     geom_bar(stat="identity")+
         ylab("Count")+
-            xlab("Topic and Associated Terms")+
+            xlab("Topic and Selected Terms")+
                 scale_y_continuous(breaks=pretty_breaks())
 
 ## Overall publication counts
@@ -79,7 +52,7 @@ dx$Publication.Title <- toupper(dx$Publication.Title)
 dx$Publication.Title <- str_wrap(dx$Publication.Title, width=40)
 
 ### Publication counts
-dx.journal <- count(dx, vars="Publication.Title")
+dx.journal <- count(dx, vars=.(Publication.Title))
 dx.journal <- as.data.frame(dx.journal[order(-dx.journal$freq,dx.journal$Publication.Title),])
 dx.journal$Publication.Title <- factor(dx.journal$Publication.Title,
                                        levels=dx.journal$Publication.Title)
