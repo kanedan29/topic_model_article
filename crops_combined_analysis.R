@@ -21,7 +21,6 @@ all_topics <- llply(.data=all, .fun=nouns_adj_only_n_grams_topics, k=3,seed=2000
 
 all_terms <- list()
 
-
 for(i in 1:length(all_topics)){
   all_terms[[i]] <- llply(all_topics[[i]], .fun=function(x){terms(x=x,thresh=0.01)})
 }
@@ -75,23 +74,22 @@ for(i in 1:length(all_terms)){
 ## Generate and save graphs to the WD using the graphs.R script.
 
 for(i in 1:length(all)){
-        dx <- all[[i]]
-        dx.tag <- names(all)[[i]]
-        dx$topic.assign <- dx$Gibbs_assign
-        labels <- c()
-        for (j in 1:3){
-            labels <- rbind(labels,
-                            paste(
-                                paste("TOPIC", j, sep = " "),
-                                all_terms[[i]][[3]][[j]][1],
-                                all_terms[[i]][[3]][[j]][2],
-                                all_terms[[i]][[3]][[j]][3],
-                                all_terms[[i]][[3]][[j]][4],
-                                all_terms[[i]][[3]][[j]][5],
-                                sep = "\n"))
-        }
-        source("graphs.R")
+    dx <- all[[i]]
+    dx.tag <- names(all)[[i]]
+    dx$Topic <- dx$Gibbs_assign
+    dx$Decade <- round_any(dx$Publication.Year,10, f=floor)
+    for (j in 1:3){
+        dx$Topic[dx$Topic == j] <- paste(
+                     paste("TOPIC", j, sep = " "),
+                     all_terms[[i]][[3]][[j]][1],
+                     all_terms[[i]][[3]][[j]][2],
+                     all_terms[[i]][[3]][[j]][3],
+                     all_terms[[i]][[3]][[j]][4],
+                     all_terms[[i]][[3]][[j]][5],
+                     sep = "\n")
     }
+    source("graphs.R")
+}
 
 ## Save workspace to WD
 

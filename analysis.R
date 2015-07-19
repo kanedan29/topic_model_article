@@ -33,14 +33,12 @@ for(i in 1:length(all_terms)){
   all_terms[[i]] <- llply(all_topics[[i]], .fun=function(x){terms(x=x,thresh=0.01)})
 }
 
-
 #lapply(top.terms, write, file=paste(getwd(),"/figures/",dx.tag,"_topic_terms.txt",sep=""), append=T, ncolumns=1000)
 
 ### assign papers to topics for all crops and all models 
 
 topic_assign_all <- rep(list(list()), 6)
 names(topic_assign_all) <- crop.names
-
 
 for(i in 1:length(all_topics)){ 
 for(j in 1:4){
@@ -52,7 +50,6 @@ colnames(topic_assign_all[[i]][[j]]) <- c("top_1_prob","top_2_prob","top_3_prob"
 }
 names(topic_assign_all[[i]]) <- names(all_topics[[i]])
 }
-
 
 for(i in 1:length(all)){
   all[[i]]$pub_number <- row.names(all[[i]])  
@@ -73,7 +70,6 @@ for(j in 2:4){
 
 ### Generate csv files that contain most likely terms for each topic
 
-
 for(i in 1:length(all_terms)){
   write.csv(makePaddedDataFrame(all_terms[[i]][[3]]), 
             file=paste(getwd(),"/topic_terms/","topic-terms-",
@@ -82,21 +78,21 @@ for(i in 1:length(all_terms)){
 
 ### Generate graphs from the graphs.R script and save to WD.
 
+
 for(i in 1:length(all)){
     dx <- all[[i]]
     dx.tag <- names(all)[[i]]
-    dx$topic.assign <- dx$Gibbs_assign
-    labels <- c()
+    dx$Topic <- dx$Gibbs_assign
+    dx$Decade <- round_any(dx$Publication.Year,10, f=floor)
     for (j in 1:3){
-        labels <- rbind(labels,
-                        paste(
-                            paste("TOPIC", j, sep = " "),
-                            all_terms[[i]][[3]][[j]][1],
-                            all_terms[[i]][[3]][[j]][2],
-                            all_terms[[i]][[3]][[j]][3],
-                            all_terms[[i]][[3]][[j]][4],
-                            all_terms[[i]][[3]][[j]][5],
-                            sep = "\n"))
+        dx$Topic[dx$Topic == j] <- paste(
+                     paste("TOPIC", j, sep = " "),
+                     all_terms[[i]][[3]][[j]][1],
+                     all_terms[[i]][[3]][[j]][2],
+                     all_terms[[i]][[3]][[j]][3],
+                     all_terms[[i]][[3]][[j]][4],
+                     all_terms[[i]][[3]][[j]][5],
+                     sep = "\n")
     }
     source("graphs.R")
 }

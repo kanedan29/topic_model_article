@@ -70,23 +70,21 @@ for(i in 1:length(all_terms)){
 
 ## Generate and save graphs using graphs.R script
 
+
 for(i in 1:length(all)){
     dx <- all[[i]]
     dx.tag <- names(all)[[i]]
-    dx$topic.assign <- dx$Gibbs_assign
-    dx$decade <- round_any(dx$Publication.Year,10, f=floor)
-    labels.decades <- paste(sort(unique(dx$decade)),sort(unique(dx$decade))+9, sep = "-")
-    labels.terms <-c()
+    dx$Topic <- dx$Gibbs_assign
+    dx$Decade <- round_any(dx$Publication.Year,10, f=floor)
     for (j in 1:3){
-        labels.terms <- rbind(labels.terms,
-                              paste(
-                                  paste("TOPIC", j, sep = " "),
-                                  all_terms[[i]][[3]][[j]][1],
-                                  all_terms[[i]][[3]][[j]][2],
-                                  all_terms[[i]][[3]][[j]][3],
-                                  all_terms[[i]][[3]][[j]][4],
-                                  all_terms[[i]][[3]][[j]][5],
-                                  sep = "\n"))
+        dx$Topic[dx$Topic == j] <- paste(
+                     paste("TOPIC", j, sep = " "),
+                     all_terms[[i]][[3]][[j]][1],
+                     all_terms[[i]][[3]][[j]][2],
+                     all_terms[[i]][[3]][[j]][3],
+                     all_terms[[i]][[3]][[j]][4],
+                     all_terms[[i]][[3]][[j]][5],
+                     sep = "\n")
     }
     source("graphs.R")
 }
