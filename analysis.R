@@ -4,8 +4,8 @@
 ### Reset java parameters, load libraries, load tags, and load custom functions.
 
 options(java.parameters="-Xmx3g")
-library(plyr)
 library(reshape2)
+library(plyr)
 source("custom_functions.R")
 source("tags2.R")
 
@@ -21,7 +21,6 @@ for(j in 1:length(all)){
 }
 
 ### run topic models on all dataframes in list ####
-detach("package:ggplot2", unload=TRUE)
 all_topics <- llply(.data=all, .fun=nouns_adj_only_n_grams_topics, k=3,seed=2000)
 
 #### Generate most likely terms from all topic models ####
@@ -76,8 +75,13 @@ for(i in 1:length(all_terms)){
                 names(all_terms)[[i]],".csv",sep=""))
 }
 
+detach(package:reshape2, unload=T)
+
 ### Generate graphs from the graphs.R script and save to WD.
 
+file.name <- "by-crop"
+dx.topic.time.all <- c()
+dx.topic.count.all <- c()
 
 for(i in 1:length(all)){
     dx <- all[[i]]
@@ -97,8 +101,7 @@ for(i in 1:length(all)){
     source("graphs.R")
 }
 
+source("graphs-overall.R")
+
 ### Save workspace.
-
 save(all, all_terms, all_topics, topic_assign_all, d, file="crops_split_workspace.RData")
-
-
