@@ -9,12 +9,11 @@ source("tags2.R")
 
 d <- read.csv("P_grain_biblio_paper_database.csv")
 
-d <- split(d,f=cut(d$Publication.Year, breaks=c(1930,1960,1990,2020)))
+d <- split(d,f=cut(d$Publication.Year, breaks=c(1929,1959,1989,2019)))
 all <- d
 names(all)<- c("1930-1959","1960-1989","1990-2015")
 
 ### run topic models on all dataframes in list ####
-detach("package:ggplot2", unload=TRUE)
 all_topics <- llply(.data=all, .fun=nouns_adj_only_n_grams_topics, k=3,seed=2000)
 
 #### Generate most likely terms from all topic models ####
@@ -70,6 +69,9 @@ for(i in 1:length(all_terms)){
 
 ## Generate and save graphs using graphs.R script
 
+file.name <- "combined-split-time"
+dx.topic.time.all <- c()
+dx.topic.count.all <- c()
 
 for(i in 1:length(all)){
     dx <- all[[i]]
@@ -88,6 +90,8 @@ for(i in 1:length(all)){
     }
     source("graphs.R")
 }
+
+source("graphs-overall.R")
 
  ## Save workspace to WD.
 
