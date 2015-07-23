@@ -71,7 +71,10 @@ for(i in 1:length(all_terms)){
             file=paste(getwd(),"/topic_terms/",names(all_terms)[[i]],"_top_terms.csv",sep=""))
 }
 
-## Generate and save graphs to the WD using the graphs.R script.
+## Generate and save graphs using graphs.R script
+
+dx.topic.time.all <- c()
+dx.topic.count.all <- c()
 
 for(i in 1:length(all)){
     dx <- all[[i]]
