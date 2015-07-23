@@ -270,4 +270,3 @@ nouns_adj_only <- function(b){
   r1<-b[y2n]
   r2 <- paste(r1, collapse = " ")
   return(r2)}
-
