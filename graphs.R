@@ -13,15 +13,18 @@ dx.topic.time <- count(dx, vars=.(Decade,Topic))
 dx.topic.time$Decade <- as.character(dx.topic.time$Decade)
 dx.topic.time$Topic <- as.factor(dx.topic.time$Topic)
 
-
-topic.decades <- ggplot(data=dx.topic.time, aes(x=Decade, y=freq, group=Topic, fill=Topic))+
+topic.decades <- ggplot(data=dx.topic.time,
+                        aes(x=Decade, y=freq, group=Topic, fill=Topic))+
     geom_bar(stat="identity", position="dodge")+
-        scale_fill_grey(start=0.3,end=0.7)+
+        scale_fill_grey(start=0.3, end=0.7)+
             ylab("Count")+
-                theme(axis.text.x=element_text(angle=45, hjust=1,vjust=1,size=10),
-                      legend.key.height = unit(1, "in")) +
-                    guides(fill=guide_legend(title="Selected\nTopic Terms"))+
-                        scale_y_continuous(breaks=pretty_breaks())
+                theme(axis.text.x=element_text(angle=45,
+                          hjust=1, vjust=1, size=10),
+                      legend.key.height=unit(1, "in")) +
+                    guides(fill= guide_legend(title="Selected\nTopic Terms"))
+
+dx.topic.time.all <- rbind(dx.topic.time.all,
+                           data.frame(Title = dx.tag, dx.topic.time))
 
 ## Overall topic counts
 
@@ -30,8 +33,11 @@ dx.topic.count <- count(dx, vars=.(Topic))
 dx.topic.hist <-ggplot(data=dx.topic.count,aes(y=freq, x=Topic))+
     geom_bar(stat="identity")+
         ylab("Count")+
-            xlab("Topic and Selected Terms")+
+            xlab("Topic and Associated Terms")+
                 scale_y_continuous(breaks=pretty_breaks())
+
+dx.topic.count.all <- rbind(dx.topic.count.all,
+                           data.frame(Title = dx.tag, dx.topic.count))
 
 ## Overall publication counts
 
@@ -69,3 +75,4 @@ ggsave(dx.topic.hist,file=paste(getwd(),"/figures/","topics-",dx.tag,".pdf",sep=
 ggsave(dx.journal.hist,file=paste(getwd(),"/figures/","publications-",dx.tag,".pdf",sep=""))
 ggsave(topic.decades,file=paste(getwd(),"/figures/","topics-decades-",dx.tag,".pdf",sep=""))
 dev.off()
+
