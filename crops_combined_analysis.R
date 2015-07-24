@@ -1,7 +1,9 @@
 ## This script analyzes the global bibliography directly without subsetting it into separate libraries.
 
 options(java.parameters="-Xmx3g")
+library(reshape2)
 library(plyr)
+library(topicmodels)
 source("custom_functions.R")
 source("tags2.R")
 
@@ -13,7 +15,7 @@ all <- list(d)
 names(all) <- "crops_combined"
 
 ### run topic models on all dataframes in list ####
-detach("package:ggplot2", unload=TRUE)
+
 all_topics <- llply(.data=all, .fun=nouns_adj_only_n_grams_topics, k=3,seed=2000)
 
 
@@ -27,68 +29,104 @@ for(i in 1:length(all_topics)){
 
 names(all_terms) <- c("crops_combined")
 
-#lapply(top.terms, write, file=paste(getwd(),"/figures/",dx.tag,"_topic_terms.txt",sep=""), append=T, ncolumns=1000)
+### assign papers and keywords to topics for all crops and all models
 
-### assign papers to topics for all crops and all models 
+topic_assign_all <- rep(list(), length(all_topics))
+topic_assign_terms <- rep(list(), length(all_topics))
+model.names <- c("VEM", "VEM_fixed", "Gibbs", "CTM")
 
-topic_assign_all <- rep(list(list()), 1)
+for(i in names(all_topics)){ 
+    for(j in model.names){
+        post <- (posterior(all_topics[[i]][[j]]))
+        topic_assign_all[[i]][[j]] <- data.frame(cbind(unlist(post[["topics"]]), 
+                                                       c(as.numeric(rownames(post[["topics"]]))), 
+                                                       unlist(topics(all_topics[[i]][[j]]))))
+        colnames(topic_assign_all[[i]][[j]]) <- c("top_1_prob","top_2_prob","top_3_prob","pub_number","Topic")
+        topic_assign_all[[i]][[j]] <- melt(topic_assign_all[[i]][[j]],
+                                           id.vars = .(pub_number, Topic),
+                                           measure.vars = .(top_1_prob, top_2_prob, top_3_prob),
+                                           value.name = "article.posterior.probability")
+        topic_assign_sel <- c()
+        for (k in 1:3){
+            topic_assign_sel <- rbind(topic_assign_sel,
+                                      topic_assign_all[[i]][[j]][topic_assign_all[[i]][[j]]$Topic == k &
+                                                                     topic_assign_all[[i]][[j]]$variable ==
+                                                                         paste("top_", k, "_prob", sep = ""),
+                                                                 c(1:2,4)])
+        }
+        topic_assign_all[[i]][[j]] <- topic_assign_sel
+        topic_assign_terms[[i]][[j]] <- melt(unlist(post$terms))
+        colnames(topic_assign_terms[[i]][[j]]) <- c("Topic", "Term", "term.posterior.probability")
+    }}
 
-names(topic_assign_all) <- "crops_combined"
+topic_assign_pub <- rep(list(), length(all_topics))
 
+for (i in names(all)){
+    for (j in model.names){
+        all[[i]]$pub_number <- row.names(all[[i]])  
+        topic_assign_pub[[i]][[j]] <- merge(all[[i]],
+                                            topic_assign_all[[i]][[j]], 
+                                            by="pub_number", sort=F)
+    }}
 
-for(i in 1:length(all_topics)){ 
-  for(j in 1:4){
-    post <- (posterior(all_topics[[i]][[j]]))
-    topic_assign_all[[i]][[j]] <- data.frame(cbind(unlist(post[[2]]), 
-                                                   c(as.numeric(rownames(post[[2]]))), 
-                                                   unlist(topics(all_topics[[i]][[j]]))))
-    colnames(topic_assign_all[[i]][[j]]) <- c("top_1_prob","top_2_prob","top_3_prob","pub_number","topic_assign")
-  }
-  names(topic_assign_all[[i]]) <- names(all_topics[[i]])
-}
+### Generate csv files that contain top papers assigned to each topic
+### (posterior probability >= .6) from the Gibbs model
 
+articles <- c()
+for(i in names(topic_assign_pub)){
+    for(j in 1:3){
+        articles <- topic_assign_pub[[i]][["Gibbs"]][topic_assign_pub[[i]][["Gibbs"]]
+                                                     $article.posterior.probability >= .6 &
+                                                         topic_assign_pub[[i]][["Gibbs"]]
+                                                     $Topic == j,
+                                                     c("Author", "Publication.Year", "Title", "Publication.Title",
+                                                       "Abstract.Note", "article.posterior.probability")]
+        articles <- articles[with(articles,
+                                  order(-article.posterior.probability)),]
+        articles$article.posterior.probability <- round(articles$article.posterior.probability, digits = 4)
+        write.csv(articles, row.names=F, file=paste(getwd(),"/topic-articles/","articles-",
+                                             i, "-topic-", j, ".csv",sep=""))
+    }}
 
-for(i in 1:length(all)){
-  all[[i]]$pub_number <- row.names(all[[i]])  
-  all[[i]] <- merge(all[[i]],topic_assign_all[[i]][[1]][,c("pub_number","topic_assign")], 
-                    by="pub_number", sort=F)
-  names(all[[i]])[names(all[[i]])=="topic_assign"] <- "VEM_assign"}
+### Generate csv files that contain most likely terms for each topic
+### (posterior probability >= .01) from the Gibbs model
 
-for(i in 1:length(all)){
-  for(j in 2:4){  
-    all[[i]]$VEM_fixed_assign <- merge(all[[i]],topic_assign_all[[i]][[j]][,c("pub_number","topic_assign")], 
-                                       by="pub_number", sort=F)[,"topic_assign"]  
-    all[[i]]$Gibbs_assign <- merge(all[[i]],topic_assign_all[[i]][[j]][,c("pub_number","topic_assign")], 
-                                   by="pub_number", sort=F)[,"topic_assign"]
-    all[[i]]$CTM_assign <- merge(all[[i]],topic_assign_all[[i]][[j]][,c("pub_number","topic_assign")], 
-                                 by="pub_number", sort=F)[,"topic_assign"]
-  }}
+topic.terms <- c()
+topic.terms.all <- rep(list(), length(all_topics))
+for(i in names(topic_assign_terms)){
+    topic.terms <- c()
+    for(j in 1:3){
+        topic.terms <- rbind(topic.terms, topic_assign_terms[[i]][["Gibbs"]][topic_assign_terms[[i]][["Gibbs"]]
+                                                                             $term.posterior.probability >= .01 &
+                                                                                 topic_assign_terms[[i]][["Gibbs"]]
+                                                                             $Topic == j,])
+        topic.terms <- topic.terms[with(topic.terms,
+                                        order(Topic, -term.posterior.probability)),]
+        topic.terms$term.posterior.probability <- round(topic.terms$term.posterior.probability, digits = 4)
+        write.csv(topic.terms, row.names=F, file=paste(getwd(),"/topic-terms/","terms-", i, ".csv",sep=""))
+        topic.terms.all[[i]] <- topic.terms
+    }}
 
-## Generate CSVs that include the top terms for each topic.
-
-for(i in 1:length(all_terms)){
-  write.csv(makePaddedDataFrame(all_terms[[i]][[3]]), 
-            file=paste(getwd(),"/topic_terms/",names(all_terms)[[i]],"_top_terms.csv",sep=""))
-}
+detach(package:reshape2, unload=T)
+detach(package:topicmodels, unload=T)
 
 ## Generate and save graphs using graphs.R script
 
 dx.topic.time.all <- c()
 dx.topic.count.all <- c()
 
-for(i in 1:length(all)){
-    dx <- all[[i]]
-    dx.tag <- names(all)[[i]]
-    dx$Topic <- dx$Gibbs_assign
+for(i in 1:length(topic_assign_pub)){
+    dx <- topic_assign_pub[[i]][["Gibbs"]][,c("Topic", "Publication.Title", "Publication.Year")]
+    dx.tag <- names(topic_assign_pub)[[i]]
     dx$Decade <- round_any(dx$Publication.Year,10, f=floor)
     for (j in 1:3){
         dx$Topic[dx$Topic == j] <- paste(
                      paste("TOPIC", j, sep = " "),
-                     all_terms[[i]][[3]][[j]][1],
-                     all_terms[[i]][[3]][[j]][2],
-                     all_terms[[i]][[3]][[j]][3],
-                     all_terms[[i]][[3]][[j]][4],
-                     all_terms[[i]][[3]][[j]][5],
+                     topic.terms.all[[i]]$Term[topic.terms.all[[i]]$Topic == j][1],
+                     topic.terms.all[[i]]$Term[topic.terms.all[[i]]$Topic == j][2],
+                     topic.terms.all[[i]]$Term[topic.terms.all[[i]]$Topic == j][3],
+                     topic.terms.all[[i]]$Term[topic.terms.all[[i]]$Topic == j][4],
+                     topic.terms.all[[i]]$Term[topic.terms.all[[i]]$Topic == j][5],
                      sep = "\n")
     }
     source("graphs.R")
@@ -96,4 +134,6 @@ for(i in 1:length(all)){
 
 ## Save workspace to WD
 
-save(all, all_terms, all_topics, topic_assign_all, d, file="crops_combined_workspace.RData")
+save(all, all_terms, all_topics, topic_assign_all, topic_assign_pub,
+     topic_assign_terms, topic.terms.all, d,
+     file="crops_combined_workspace.RData")
