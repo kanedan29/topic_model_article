@@ -9,14 +9,14 @@ library(scales)
  
 ## Topic histogram per decade
 
-dx.topic.time <- count(dx, vars=.(Decade,Topic))
+dx.topic.time <- count(dx, vars=.(Decade, Topic))
 dx.topic.time$Decade <- as.character(dx.topic.time$Decade)
 dx.topic.time$Topic <- as.factor(dx.topic.time$Topic)
 
 topic.decades <- ggplot(data=dx.topic.time,
                         aes(x=Decade, y=freq, group=Topic, fill=Topic))+
     geom_bar(stat="identity", position="dodge")+
-        scale_fill_grey(start=0.3, end=0.7)+
+        scale_fill_manual(values=grey.colors(3, start=.3, end=.7))+
             ylab("Count")+
                 theme(axis.text.x=element_text(angle=45,
                           hjust=1, vjust=1, size=10),

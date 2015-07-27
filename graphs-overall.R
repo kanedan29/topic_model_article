@@ -9,6 +9,8 @@ dx.topic.time.all$Title[dx.topic.time.all$Title == "pp"] <- "pigeon\npea"
 topic.decades.all <- ggplot(data=dx.topic.time.all,
                              aes(x=Decade, y=freq, group=Topic, fill=Topic))+
     geom_bar(stat="identity", position="dodge")+
+        scale_fill_manual(values=rep(grey.colors(3, start=.3, end=.7),
+                              length(topic_assign_pub)))+
         ylab("Count")+
             facet_grid(Title ~ ., scales="free_y", space="free_y")+
                 theme(axis.text.x=element_text(angle=45,
