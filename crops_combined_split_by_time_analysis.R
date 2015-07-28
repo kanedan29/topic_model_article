@@ -75,19 +75,28 @@ for (i in names(all)){
 articles <- c()
 file.name <- "combined-split-time"
 for(i in names(topic_assign_pub)){
-    for(j in 1:3){
-        articles <- topic_assign_pub[[i]][["Gibbs"]][topic_assign_pub[[i]][["Gibbs"]]
-                                                     $article.posterior.probability >= .6 &
-                                                         topic_assign_pub[[i]][["Gibbs"]]
-                                                     $Topic == j,
-                                                     c("Author", "Publication.Year", "Title", "Publication.Title",
-                                                       "Abstract.Note", "article.posterior.probability")]
-        articles <- articles[with(articles,
-                                  order(-article.posterior.probability)),]
-        articles$article.posterior.probability <- round(articles$article.posterior.probability, digits = 4)
-        write.csv(articles, row.names=F, file=paste(getwd(),"/topic-articles/","articles-", file.name, "-",
-                                i, "-topic-", j, ".csv",sep=""))
-    }}
+    articles <- topic_assign_pub[[i]][["Gibbs"]][topic_assign_pub[[i]][["Gibbs"]]
+                                                 $article.posterior.probability >= .6,
+                                                 c("Topic", "Author", "Publication.Year", "Title", "Publication.Title",
+                                                   "article.posterior.probability", "Abstract.Note")]
+    articles <- articles[with(articles,
+                              order(Topic, -article.posterior.probability)),]
+    articles2 <- c()
+    for (j in 1:dim(articles)[1]){
+        articles2 <- rbind(articles2,
+                           data.frame(Topic=articles$Topic[j],
+                                      Article=paste(gsub(";", ",", articles$Author[j]),
+                                          " (", articles$Publication.Year[j], ") ",
+                                          articles$Title[j], ". ", articles$Publication.Title[j], sep=""),
+                                      Probability=articles$article.posterior.probability[j],
+                                      Abstract=articles$Abstract.Note[j]))
+    }
+    articles <- articles2
+    rm(articles2)
+    articles$Probability <- round(articles$Probability, digits = 4)
+    write.csv(articles, row.names=F, file=paste(getwd(),"/topic-articles/","articles-", file.name, "-",
+                                         i, ".csv",sep=""))
+}
 
 ## Generate CSVs that include top terms for each topic
 
