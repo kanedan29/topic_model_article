@@ -8,8 +8,11 @@ library(stringr)
 source("tags2.R")
 
 ## Import databases
-db.old <- read.csv("P_grain_biblio_paper_database-148ac56e.csv")
-db.new <- read.csv("P_grain_biblio_paper_database.csv")
+db.old <- read.csv("P_grain_biblio_paper_database-148ac56e.csv", na.strings="")
+db.new <- read.csv("P_grain_biblio_paper_database.csv", na.strings="")
+
+db.old.abs <- db.old[!is.na(db.old$Abstract.Note),]
+db.new.abs <- db.new[!is.na(db.new$Abstract.Note),]
 
 ## Make table of articles removed. Note that this is just based on the
 ## Key field. For the most part, this is correct except where entries

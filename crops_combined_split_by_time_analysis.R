@@ -9,7 +9,8 @@ source("tags2.R")
 
 ### read in data and recompile into a large list of dataframes for each crop ####
 
-d <- read.csv("P_grain_biblio_paper_database.csv")
+d <- read.csv("P_grain_biblio_paper_database.csv", na.strings="")
+d <- d[!is.na(d$Abstract.Note),]
 
 d <- split(d,f=cut(d$Publication.Year, breaks=c(1929,1959,1989,2019)))
 all <- d

@@ -80,9 +80,6 @@ nouns_only_n_grams_topics <- function(k,data,seed){
   Corpus.str <- lapply(myCorpus, function(x){
     x <- as.String(x)  }  )
   
-  ### Eliminate all papers that do not have abstracts
-  Corpus.str <- Corpus.str[Corpus.str != ""]
-  
   ### Create empty list for corpus that only includes nouns and fill it using the
   ### nouns_only function
   Corpus.noun <- list()
