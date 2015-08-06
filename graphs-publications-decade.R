@@ -1,8 +1,9 @@
 ## Import Data
-d <- data.frame(year = read.csv("P_grain_biblio_paper_database.csv")$Publication.Year,
-                Publication = as.character(
-                    read.csv("P_grain_biblio_paper_database.csv")$Publication.Title),
-                tags = read.csv("P_grain_biblio_paper_database.csv")$Manual.Tags
+d <- read.csv("P_grain_biblio_paper_database.csv", na.strings="")
+d <- d[!is.na(d$Abstract.Note),]
+d <- data.frame(year = d$Publication.Year,
+                Publication = as.character(d$Publication.Title),
+                tags = d$Manual.Tags
                 )
 
 ## Replace "&" with "and"

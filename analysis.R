@@ -75,29 +75,46 @@ for (i in names(all)){
     }}
 
 ### Generate csv files that contain top papers assigned to each topic
-### (posterior probability >= .6) from the Gibbs model
+### (prob >= .7 if greater than 5 articles assigned) from the Gibbs model
 
 articles <- c()
+
 file.name <- "by-crop"
 for(i in names(topic_assign_pub)){
-    articles <- topic_assign_pub[[i]][["Gibbs"]][topic_assign_pub[[i]][["Gibbs"]]
-                                                 $article.posterior.probability >= .6,
-                                                 c("Topic", "Author", "Publication.Year", "Title", "Publication.Title",
-                                                   "article.posterior.probability", "Abstract.Note")]
+    articles <- topic_assign_pub[[i]][["Gibbs"]][,c("Topic",
+                                                    "Author", "Publication.Year", "Title", "Publication.Title",
+                                                    "article.posterior.probability", "Abstract.Note")]
     articles <- articles[with(articles,
                               order(Topic, -article.posterior.probability)),]
+
     articles2 <- c()
-    for (j in 1:dim(articles)[1]){
-        articles2 <- rbind(articles2,
-                           data.frame(Topic=articles$Topic[j],
-                                      Article=paste(gsub(";", ",", articles$Author[j]),
-                                          " (", articles$Publication.Year[j], ") ",
-                                          articles$Title[j], ". ", articles$Publication.Title[j], sep=""),
-                                      Probability=articles$article.posterior.probability[j],
-                                      Abstract=articles$Abstract.Note[j]))
+
+    for (j in 1:3){   
+        if (dim(articles[articles$Topic == j,]
+                [articles[articles$Topic == j,]
+                 $article.posterior.probability >= .7,])[1] < 5)
+            articles2 <-  rbind(articles2,
+                                head(articles[articles$Topic == j,], n=5))
+        else {
+            articles2 <- rbind(articles2, articles[articles$Topic == j,]
+                               [articles[articles$Topic == j,]
+                                $article.posterior.probability >= .7,])
+        }}
+                           
+    articles3 <- c()
+
+    for (j in 1:dim(articles2)[1]){
+        articles3 <- rbind(articles3,
+                           data.frame(Topic=articles2$Topic[j],
+                                      Article=paste(gsub(";", ",", articles2$Author[j]),
+                                          " (", articles2$Publication.Year[j], ") ",
+                                          articles2$Title[j], ". ", articles2$Publication.Title[j], sep=""),
+                                      Probability=articles2$article.posterior.probability[j],
+                                      Abstract=articles2$Abstract.Note[j]))
     }
-    articles <- articles2
-    rm(articles2)
+
+    articles <- articles3
+    rm(articles2,articles3)
     articles$Probability <- round(articles$Probability, digits = 4)
     write.csv(articles, row.names=F, file=paste(getwd(),"/topic-articles/","articles-", file.name, "-",
                                          i, ".csv",sep=""))
@@ -149,6 +166,7 @@ for(i in 1:length(topic_assign_pub)){
 }
 
 source("graphs-overall.R")
+source("graphs2.R")
 
 ### Save workspace.
 

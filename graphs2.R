@@ -1,6 +1,6 @@
+library(stringr)
 library(reshape2)
 library(plyr)
-library(stringr)
 library(ggplot2)
 library(grid)
 library(fields)

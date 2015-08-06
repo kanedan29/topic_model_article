@@ -6,7 +6,9 @@ require("RColorBrewer")
 
 ## Import Data
 
-d <- as.character(read.csv("P_grain_biblio_paper_database.csv")$Manual.Tags)
+d <- read.csv("P_grain_biblio_paper_database.csv", na.strings="")
+d <- d[!is.na(d$Abstract.Note),]
+d <- as.character(d$Manual.Tags)
 
 ## Create Category Names
 
