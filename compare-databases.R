@@ -19,13 +19,17 @@ db.new.abs <- db.new[!is.na(db.new$Abstract.Note),]
 ## were merged in Zotero, thus creating a new Key. The db.old includes
 ## 3026 entries and db.new includes 2696 entries for a difference of
 ## 330 entries. However, 452 entries are reported to differ in terms
-## of Keys, with a difference of 122 entries due to merging.
+## of Keys, with a difference of 122 entries due to merging. There are
+## far less of a difference for only articles with abstracts in both
+## databases: records old 2679, records new 2558, difference of 121 in
+## terms of length, and 264 in terms of keys. This means 143 of those
+## articles with abstracts were merged. Not sure why.
 
-db.diff <- db.old[!db.old$Key %in% db.new$Key,
+db.diff <- db.old[!db.old.abs$Key %in% db.new.abs$Key,
                   c("Key", "Author", "Title", "Publication.Year",
                     "Abstract.Note", "Manual.Tags")]
 
-## Compare length: 452 removed and/or merged as of 2015-07-27
+## Compare length: 264 removed and/or merged as of 2015-08-06
 dim(db.diff)[1]
 
 ## Make tags object and sort tags by frequency
