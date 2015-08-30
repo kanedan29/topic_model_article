@@ -2,7 +2,7 @@
 ## a large list. The corresponding workspace is 'Crops_split_workspace.RData'
 
 ### Reset java parameters, load libraries, load tags, and load custom functions.
-
+setwd("~/Documents/P_grains/GITHUB/topic_model_article")
 options(java.parameters="-Xmx3g")
 library(reshape2)
 library(plyr)
@@ -12,7 +12,7 @@ source("tags2.R")
 
 ### read in data and recompile into a large list of dataframes for each crop ####
 
-d <- read.csv("P_grain_biblio_paper_database.csv", na.strings="")
+d <- read.csv("P_grains_relevant.csv", na.strings="")
 d <- d[!is.na(d$Abstract.Note),]
 
 all <- rep( list(data.frame()), 6) 
@@ -162,8 +162,11 @@ for(i in 1:length(topic_assign_pub)){
                      topic.terms.all[[i]]$Term[topic.terms.all[[i]]$Topic == j][5],
                      sep = "\n")
     }
-    source("graphs.R")
+        source("graphs-overall.R")
 }
+    
+source("graphs.R")
+
 
 source("graphs-overall.R")
 source("graphs2.R")

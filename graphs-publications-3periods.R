@@ -1,8 +1,8 @@
 ## Import Data
-d <- data.frame(year = read.csv("P_grain_biblio_paper_database.csv")$Publication.Year,
+d <- data.frame(year = read.csv("P_grains_relevant.csv")$Publication.Year,
                 Publication = as.character(
-                    read.csv("P_grain_biblio_paper_database.csv")$Publication.Title),
-                tags = read.csv("P_grain_biblio_paper_database.csv")$Manual.Tags
+                    read.csv("P_grains_relevant.csv")$Publication.Title),
+                tags = read.csv("P_grains_relevant.csv")$Manual.Tags
                 )
 
 ## Replace "&" with "and"
@@ -61,7 +61,7 @@ d.df.summary <- arrange(d.df.summary, key, desc(period), desc(n.norm),
 
 ## Select top 10 publications per time period
 
-d.df.summary <- ddply(d.df.summary, .(key, period), function(x) x[1:10,])
+d.df.summary <- ddply(d.df.summary, .(key, period), function(x) x[1:5,])
 
 detach(package:reshape2, unload=T)
 detach(package:plyr, unload=T)

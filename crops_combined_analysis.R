@@ -1,5 +1,5 @@
 ## This script analyzes the global bibliography directly without subsetting it into separate libraries.
-
+setwd("~/Documents/P_grains/GITHUB/topic_model_article")
 options(java.parameters="-Xmx3g")
 library(reshape2)
 library(plyr)
@@ -9,7 +9,7 @@ source("tags2.R")
 
 ### read in data and recompile into a large list of dataframes for each crop ####
 
-d <- read.csv("P_grain_biblio_paper_database.csv", na.strings="")
+d <- read.csv("P_grains_relevant.csv", na.strings="")
 d <- d[!is.na(d$Abstract.Note),]
 
 all <- list(d)

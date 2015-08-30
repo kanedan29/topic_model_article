@@ -1,5 +1,5 @@
 ## Import Data
-d <- read.csv("P_grain_biblio_paper_database.csv", na.strings="")
+d <- read.csv("P_grains_relevant.csv", na.strings="")
 d <- d[!is.na(d$Abstract.Note),]
 d <- data.frame(year = d$Publication.Year,
                 Publication = as.character(d$Publication.Title),
