@@ -59,7 +59,7 @@ d.df.summary <- ldply(d.list.summary, .id="key")
 d.df.summary <- arrange(d.df.summary, key, desc(period), desc(n.norm),
                         Publication)
 
-## Select top 10 publications per time period
+## Select top 5 publications per time period
 
 d.df.summary <- ddply(d.df.summary, .(key, period), function(x) x[1:5,])
 
@@ -86,11 +86,11 @@ for (i in unique(d.df.summary$key)){
                 aes(x=Publication, y=Count))+
         geom_bar(stat="identity")+
             facet_grid(. ~ period, scale = "free_y")+
-                theme(axis.text.y = element_text(size = 7))+
+                theme(axis.text.y = element_text(size = 10))+
                 coord_flip()
 
     ggsave(g,file=paste(getwd(),"/figures/","publications-3periods-",
-                 i,".pdf",sep=""), width = 7, height = 9, units = "in")
+                 i,".pdf",sep=""), width = 7, height = 7, units = "in")
 
 }
 
