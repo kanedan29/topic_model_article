@@ -64,12 +64,13 @@ dx.journal$Publication.Title <- factor(dx.journal$Publication.Title,
                                        levels=dx.journal$Publication.Title)
 
 ### Plot publications
-dx.journal.hist <-ggplot(data=dx.journal[dx.journal$freq >= 10,], aes(y=freq,x=Publication.Title))+
+dx.journal.hist <-ggplot(data=dx.journal[1:5,], aes(y=freq,x=Publication.Title))+
     geom_bar(stat="identity")+
         ylab("Count")+
-            xlab("Publications")+
-                theme(axis.text.y = element_text(size = 7))+
-                    coord_flip()
+        xlab("Publications")+
+        theme(axis.text.y = element_text(size = 7))+
+        coord_flip()+
+        scale_y_discrete()
 
 ggsave(dx.topic.hist,file=paste(getwd(),"/figures/","topics-",dx.tag,".pdf",sep=""))
 ggsave(dx.journal.hist,file=paste(getwd(),"/figures/","publications-",dx.tag,".pdf",sep=""))

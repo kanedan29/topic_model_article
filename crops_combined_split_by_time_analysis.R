@@ -118,7 +118,7 @@ for(i in names(topic_assign_pub)){
 ## Generate CSVs that include top terms for each topic
 
 topic.terms <- c()
-
+file.name <- "combined-split-time"
 topic.terms.all <- rep(list(), length(all_topics))
 for(i in names(topic_assign_terms)){
     topic.terms <- c()

@@ -162,10 +162,10 @@ for(i in 1:length(topic_assign_pub)){
                      topic.terms.all[[i]]$Term[topic.terms.all[[i]]$Topic == j][5],
                      sep = "\n")
     }
-        source("graphs-overall.R")
+        source("graphs.R")
 }
     
-source("graphs.R")
+
 
 
 source("graphs-overall.R")
