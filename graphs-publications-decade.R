@@ -2,9 +2,19 @@
 d <- read.csv("P_grains_relevant.csv", na.strings="")
 d <- d[!is.na(d$Abstract.Note),]
 d <- data.frame(year = d$Publication.Year,
-                Publication = as.character(d$Publication.Title),
+                Publication = d$Publication.Title,
                 tags = d$Manual.Tags
                 )
+
+d$Publication <- as.character(d$Publication)
+
+d_replace <- read.csv("pairs/pairs-j-em-replace.csv", colClasses = "character")
+
+## Replace from replace with replacement
+
+for (i in 1:nrow(d_replace)){
+    d$Publication[d$Publication == d_replace$replace[i]] <- d_replace$replacement[i]
+}
 
 ## Replace "&" with "and"
 d$Publication <- gsub("&", "and", d$Publication, ignore.case=T)
@@ -37,9 +47,8 @@ d <- ldply(d.list, .id="period")
 d.list <- list(grain = d[grep("search.grain", d$tags),][,c("Publication","period")],
                pigeonpea = d[grep("search.pigeonpea", d$tags),][,c("Publication","period")],
                rice = d[grep("search.rice", d$tags),][,c("Publication","period")],
-               rye_wheat = d[sort(
-                   unique(unlist(sapply(c("search.rye", "search.wheat"),
-                                        grep, d$tags), recursive=T))),][,c("Publication","period")],
+               rye = d[grep("rye.wheat", d$tags),][,c("Publication","period")],    
+               wheat = d[grep("search.wheat", d$tags),][,c("Publication","period")],    
                sorghum = d[grep("search.sorghum", d$tags),][,c("Publication","period")],
                all = d[,c("Publication","period")])
 
