@@ -1,9 +1,17 @@
 ## Import Data
 d <- data.frame(year = read.csv("P_grains_relevant.csv")$Publication.Year,
-                Publication = as.character(
-                    read.csv("P_grains_relevant.csv")$Publication.Title),
-                tags = read.csv("P_grains_relevant.csv")$Manual.Tags
-                )
+                Publication = read.csv("P_grains_relevant.csv")$Publication.Title,
+                tags = read.csv("P_grains_relevant.csv")$Manual.Tags)
+
+d$Publication <- as.character(d$Publication)
+
+d_replace <- read.csv("pairs/pairs-j-em-replace.csv", colClasses = "character")
+
+## Replace from replace with replacement
+
+for (i in 1:nrow(d_replace)){
+    d$Publication[d$Publication == d_replace$replace[i]] <- d_replace$replacement[i]
+}
 
 ## Replace "&" with "and"
 d$Publication <- gsub("&", "and", d$Publication, ignore.case=T)

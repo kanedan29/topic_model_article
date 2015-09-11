@@ -2,9 +2,19 @@
 d <- read.csv("P_grains_relevant.csv", na.strings="")
 d <- d[!is.na(d$Abstract.Note),]
 d <- data.frame(year = d$Publication.Year,
-                Publication = as.character(d$Publication.Title),
+                Publication = d$Publication.Title,
                 tags = d$Manual.Tags
                 )
+
+d$Publication <- as.character(d$Publication)
+
+d_replace <- read.csv("pairs/pairs-j-em-replace.csv", colClasses = "character")
+
+## Replace from replace with replacement
+
+for (i in 1:nrow(d_replace)){
+    d$Publication[d$Publication == d_replace$replace[i]] <- d_replace$replacement[i]
+}
 
 ## Replace "&" with "and"
 d$Publication <- gsub("&", "and", d$Publication, ignore.case=T)
