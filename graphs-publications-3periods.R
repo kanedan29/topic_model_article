@@ -42,9 +42,8 @@ d <- ldply(d.list, .id="period")
 d.list <- list(grain = d[grep("search.grain", d$tags),][,c("Publication","period")],
                pigeonpea = d[grep("search.pigeonpea", d$tags),][,c("Publication","period")],
                rice = d[grep("search.rice", d$tags),][,c("Publication","period")],
-               rye_wheat = d[sort(
-                   unique(unlist(sapply(c("search.rye", "search.wheat"),
-                                        grep, d$tags), recursive=T))),][,c("Publication","period")],
+               rye = d[grep("rye.wheat", d$tags),][,c("Publication","period")],    
+               wheat = d[grep("search.wheat", d$tags),][,c("Publication","period")],
                sorghum = d[grep("search.sorghum", d$tags),][,c("Publication","period")],
                all = d[,c("Publication","period")])
 
