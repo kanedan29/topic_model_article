@@ -1,5 +1,4 @@
-## This script takes the global bibliography then splits it into separate dataframes for each crop that are compiled into
-## a large list. The corresponding workspace is 'Crops_split_workspace.RData'
+## This script takes crop specific libraries, parses out the attached full text then models topics
 
 ### Reset java parameters, load libraries, load tags, and load custom functions.
 setwd("~/Documents/P_grains/GITHUB/topic_model_article")
@@ -7,33 +6,39 @@ options(java.parameters="-Xmx3g")
 library(reshape2)
 library(plyr)
 library(topicmodels)
+library(XML)
 source("custom_functions.R")
 source("tags2.R")
 
 ### read in data and recompile into a large list of dataframes for each crop ####
 
-d <- read.csv("P_grains_relevant.csv", na.strings="")
-d <- d[!is.na(d$Abstract.Note),]
+d <- read.csv("Relevant with DOI sorghum.csv", na.strings="")
 
-all <- rep( list(data.frame()), 6) 
-names(all) <- crop.names
+# Read and parse HTML file
+d$Notes <- as.character(d$Notes)
+test <- htmlParse
+d$Notes2 <- sapply(X=d$Notes, FUN= function(x) htmlParse(x,asText=T))
+d$Notes3 <- as.list(lapply(X=d$Notes2, FUN = function(y) xpathSApply(y, "//p",xmlValue)))
+#class(d$Notes3)
+#test3 <- as.list(xpathSApply(test2,"//p",xmlValue))
+d$full.text <- as.character(lapply(d$Notes3, function(x) grep("full text*", x, value=T)))
 
-for(j in 1:length(all)){
-  all[[j]] <- subit(data=d, all.tags[[j]])
-}
+
+all <- list(d)
+names(all) <- "crops_combined"
 
 ### run topic models on all dataframes in list ####
 all_topics <- llply(.data=all, .fun=nouns_adj_only_n_grams_topics, k=3,seed=2000)
 
 #### Generate most likely terms from all topic models ####
 
-all_terms <- rep( list(list()), 6 ) 
-names(all_terms) <- names(all_topics)
+all_terms <- list()
 
-for(i in 1:length(all_terms)){
-  all_terms[[i]] <- llply(all_topics[[i]], .fun=function(x){terms(x=x,thresh=0.01)})
+for(i in 1:length(all_topics)){
+  all_terms[[i]] <- llply(all_topics[[i]], .fun=function(x){terms(x=x,thresh=0.005)})
 }
 
+names(all_terms) <- c("crops_combined")
 ### assign papers and keywords to topics for all crops and all models
 
 topic_assign_all <- rep(list(), length(all_topics))

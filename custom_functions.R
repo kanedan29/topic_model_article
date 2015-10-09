@@ -22,7 +22,11 @@ removeURL <- function(x) gsub("http[[:alnum:]]*", "", x)
 myCorpus <- tm_map(myCorpus, content_transformer(removeURL))
 # remove crop terms
 myCorpus <- tm_map(myCorpus, content_transformer(removeWords), c("wheat","grain","triticum","rice","oryza","rye",
+<<<<<<< HEAD
+                                                               "secale","pigeonpea","pigeon pea","sorghum","cajanus","cassava","manihot"))
+=======
                                                                  "secale","pigeonpea","pigeon pea","sorghum","cajanus","cassava","manihot"))
+>>>>>>> f4ce27985665bd23460ffee202dc502063949fd8
 # remove stopwords
 myCorpus <- tm_map(myCorpus, content_transformer(removeWords), stopwords("SMART"))
 #stem words
@@ -160,7 +164,11 @@ nouns_adj_only_topics <- function(k,data,seed){
   myCorpus <- tm_map(myCorpus, content_transformer(removeURL))
   # remove crop terms
   myCorpus <- tm_map(myCorpus, content_transformer(removeWords), c("wheat","grain","triticum","rice","oryza","rye",
+<<<<<<< HEAD
+                                                                 "secale","pigeonpea","pigeon pea","sorghum","cajanus","cassava","manihot"))
+=======
                                                                   "secale","pigeonpea","pigeon pea","sorghum","cajanus","cassava","manihot"))
+>>>>>>> f4ce27985665bd23460ffee202dc502063949fd8
   # remove stopwords
   myCorpus <- tm_map(myCorpus, content_transformer(removeWords), stopwords("SMART"))
   #stem words
@@ -212,7 +220,7 @@ nouns_adj_only_n_grams_topics <- function(k,data,seed){
   library(topicmodels)
   library(slam)
   library(RWeka)
-  myCorpus <- Corpus(VectorSource(data$Abstract.Note))
+  myCorpus <- Corpus(VectorSource(data$full.text))
   
   ### Convert corpus to list of character vectors
   Corpus.str <- lapply(myCorpus, function(x){
@@ -241,7 +249,11 @@ nouns_adj_only_n_grams_topics <- function(k,data,seed){
   myCorpus <- tm_map(myCorpus, content_transformer(removeURL))
   # remove crop terms
   myCorpus <- tm_map(myCorpus, content_transformer(removeWords), c("wheat","grain","triticum","rice","oryza","rye",
+<<<<<<< HEAD
+                                                             "secale","pigeonpea","pigeon pea","sorghum","cajanus","cassava","manihot"))
+=======
                                                                "secale","pigeonpea","pigeon pea","sorghum","cajanus","cassava","manihot"))
+>>>>>>> f4ce27985665bd23460ffee202dc502063949fd8
   # remove stopwords
   myCorpus <- tm_map(myCorpus, content_transformer(removeWords), stopwords("SMART"))
   #stem words
