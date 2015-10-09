@@ -21,8 +21,8 @@ myCorpus <- tm_map(myCorpus, content_transformer(removeNumbers))
 removeURL <- function(x) gsub("http[[:alnum:]]*", "", x)
 myCorpus <- tm_map(myCorpus, content_transformer(removeURL))
 # remove crop terms
-#myCorpus <- tm_map(myCorpus, content_transformer(removeWords), c("wheat","grain","triticum","rice","oryza","rye",
- #                                                                "secale","pigeonpea","pigeon pea","sorghum","cajanus","cassava","manihot"))
+myCorpus <- tm_map(myCorpus, content_transformer(removeWords), c("wheat","grain","triticum","rice","oryza","rye",
+                                                                 "secale","pigeonpea","pigeon pea","sorghum","cajanus","cassava","manihot"))
 # remove stopwords
 myCorpus <- tm_map(myCorpus, content_transformer(removeWords), stopwords("SMART"))
 #stem words
@@ -82,8 +82,8 @@ topics_simple <- function(k,data,seed){
   removeURL <- function(x) gsub("http[[:alnum:]]*", "", x)
   myCorpus <- tm_map(myCorpus, content_transformer(removeURL))
   # remove crop terms
-  #myCorpus <- tm_map(myCorpus, content_transformer(removeWords), c("wheat","grain","triticum","rice","oryza","rye",
-  #                                                                "secale","pigeonpea","pigeon pea","sorghum","cajanus","cassava","manihot"))
+  myCorpus <- tm_map(myCorpus, content_transformer(removeWords), c("wheat","grain","triticum","rice","oryza","rye",
+                                                                "secale","pigeonpea","pigeon pea","sorghum","cajanus","cassava","manihot"))
   # remove stopwords
   myCorpus <- tm_map(myCorpus, content_transformer(removeWords), stopwords("SMART"))
   #stem words
@@ -159,8 +159,8 @@ nouns_adj_only_topics <- function(k,data,seed){
   removeURL <- function(x) gsub("http[[:alnum:]]*", "", x)
   myCorpus <- tm_map(myCorpus, content_transformer(removeURL))
   # remove crop terms
-  #myCorpus <- tm_map(myCorpus, content_transformer(removeWords), c("wheat","grain","triticum","rice","oryza","rye",
-  #                                                                 "secale","pigeonpea","pigeon pea","sorghum","cajanus","cassava","manihot"))
+  myCorpus <- tm_map(myCorpus, content_transformer(removeWords), c("wheat","grain","triticum","rice","oryza","rye",
+                                                                  "secale","pigeonpea","pigeon pea","sorghum","cajanus","cassava","manihot"))
   # remove stopwords
   myCorpus <- tm_map(myCorpus, content_transformer(removeWords), stopwords("SMART"))
   #stem words
@@ -240,8 +240,8 @@ nouns_adj_only_n_grams_topics <- function(k,data,seed){
   removeURL <- function(x) gsub("http[[:alnum:]]*", "", x)
   myCorpus <- tm_map(myCorpus, content_transformer(removeURL))
   # remove crop terms
-  #myCorpus <- tm_map(myCorpus, content_transformer(removeWords), c("wheat","grain","triticum","rice","oryza","rye",
-   #                                                                "secale","pigeonpea","pigeon pea","sorghum","cajanus","cassava","manihot"))
+  myCorpus <- tm_map(myCorpus, content_transformer(removeWords), c("wheat","grain","triticum","rice","oryza","rye",
+                                                               "secale","pigeonpea","pigeon pea","sorghum","cajanus","cassava","manihot"))
   # remove stopwords
   myCorpus <- tm_map(myCorpus, content_transformer(removeWords), stopwords("SMART"))
   #stem words

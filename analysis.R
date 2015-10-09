@@ -139,6 +139,7 @@ for(i in names(topic_assign_terms)){
                                                 i, ".csv",sep=""))
         topic.terms.all[[i]] <- topic.terms
     }}
+topic.terms.all <- droplevels(topic.terms.all)
 
 detach(package:reshape2, unload=T)
 detach(package:topicmodels, unload=T)
@@ -164,11 +165,9 @@ for(i in 1:length(topic_assign_pub)){
     }
         source("graphs.R")
 }
-    
 
 
-
-source("graphs-overall.R")
+#source("graphs-overall.R")
 source("graphs2.R")
 
 ### Save workspace.
