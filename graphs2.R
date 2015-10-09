@@ -12,7 +12,7 @@ library(doBy)
 names(all) <- c("Perennial Grains","Pigeonpea","Rice","Rye","Sorghum","Wheat")
 dx.year <- ldply(.data=all,.fun=count, vars=c("Publication.Year"))
 dx.year$freq <- as.numeric(dx.year$freq)
-dx.year2 <- split(dx.year,f=cut(dx.year$Publication.Year, breaks=seq(1930,2020,by=10)))
+dx.year2 <- split(dx.year,f=cut(dx.year$Publication.Year, breaks=seq(1929,2019,by=10)))
 test <- summaryBy(data=dx.year2[[6]], formula=freq~.id,FUN=sum)
 dx.year3 <- list()
 for(i in 1:length(dx.year2)){
