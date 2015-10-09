@@ -10,8 +10,18 @@ library(scales)
 ## Topic histogram per decade
 
 dx.topic.time <- count(dx, vars=.(Decade, Topic))
+
 dx.topic.time$Decade <- as.character(dx.topic.time$Decade)
 dx.topic.time$Topic <- as.factor(dx.topic.time$Topic)
+dx.topic.time$Decade[dx.topic.time$Decade == 1930] <- "1930-1939"
+dx.topic.time$Decade[dx.topic.time$Decade == 1940] <- "1940-1949"
+dx.topic.time$Decade[dx.topic.time$Decade == 1950] <- "1950-1959"
+dx.topic.time$Decade[dx.topic.time$Decade == 1960] <- "1960-1969"
+dx.topic.time$Decade[dx.topic.time$Decade == 1970] <- "1970-1979"
+dx.topic.time$Decade[dx.topic.time$Decade == 1980] <- "1980-1989"
+dx.topic.time$Decade[dx.topic.time$Decade == 1990] <- "1990-1999"
+dx.topic.time$Decade[dx.topic.time$Decade == 2000] <- "2000-2009"
+dx.topic.time$Decade[dx.topic.time$Decade == 2010] <- "2010-2015"
 
 topic.decades <- ggplot(data=dx.topic.time,
                         aes(x=Decade, y=freq, group=Topic, fill=Topic))+
@@ -70,7 +80,7 @@ dx.journal.hist <-ggplot(data=dx.journal[1:5,], aes(y=freq,x=Publication.Title))
         xlab("Publications")+
         theme(axis.text.y = element_text(size = 7))+
         coord_flip()+
-        scale_y_discrete()
+        scale_y_continuous(breaks=seq(from=0,to=max(dx.journal$freq),by=2))
 
 ggsave(dx.topic.hist,file=paste(getwd(),"/figures/","topics-",dx.tag,".pdf",sep=""))
 ggsave(dx.journal.hist,file=paste(getwd(),"/figures/","publications-",dx.tag,".pdf",sep=""))
