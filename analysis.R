@@ -12,20 +12,15 @@ source("tags2.R")
 
 ### read in data and recompile into a large list of dataframes for each crop ####
 
-d <- read.csv("Relevant with DOI sorghum.csv", na.strings="")
+d <- read.csv("P_grains_relevant.csv", na.strings="")
+d <- d[!is.na(d$Abstract.Note),]
 
-# Read and parse HTML file
-d$Notes <- as.character(d$Notes)
-test <- htmlParse
-d$Notes2 <- sapply(X=d$Notes, FUN= function(x) htmlParse(x,asText=T))
-d$Notes3 <- as.list(lapply(X=d$Notes2, FUN = function(y) xpathSApply(y, "//p",xmlValue)))
-#class(d$Notes3)
-#test3 <- as.list(xpathSApply(test2,"//p",xmlValue))
-d$full.text <- as.character(lapply(d$Notes3, function(x) grep("full text*", x, value=T)))
+all <- rep( list(data.frame()), 6) 
+names(all) <- crop.names
 
-
-all <- list(d)
-names(all) <- "crops_combined"
+for(j in 1:length(all)){
+  all[[j]] <- subit(data=d, all.tags[[j]])
+}
 
 ### run topic models on all dataframes in list ####
 all_topics <- llply(.data=all, .fun=nouns_adj_only_n_grams_topics, k=3,seed=2000)
