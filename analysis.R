@@ -1,4 +1,5 @@
-## This script takes crop specific libraries, parses out the attached full text then models topics
+## This script takes the global bibliography then splits it into separate dataframes for each crop that are compiled into
+## a large list. The corresponding workspace is 'Crops_split_workspace.RData'
 
 ### Reset java parameters, load libraries, load tags, and load custom functions.
 setwd("~/Documents/P_grains/GITHUB/topic_model_article")
@@ -6,7 +7,6 @@ options(java.parameters="-Xmx3g")
 library(reshape2)
 library(plyr)
 library(topicmodels)
-library(XML)
 source("custom_functions.R")
 source("tags2.R")
 
@@ -27,13 +27,13 @@ all_topics <- llply(.data=all, .fun=nouns_adj_only_n_grams_topics, k=3,seed=2000
 
 #### Generate most likely terms from all topic models ####
 
-all_terms <- list()
+all_terms <- rep( list(list()), 6 ) 
+names(all_terms) <- names(all_topics)
 
-for(i in 1:length(all_topics)){
-  all_terms[[i]] <- llply(all_topics[[i]], .fun=function(x){terms(x=x,thresh=0.005)})
+for(i in 1:length(all_terms)){
+  all_terms[[i]] <- llply(all_topics[[i]], .fun=function(x){terms(x=x,thresh=0.01)})
 }
 
-names(all_terms) <- c("crops_combined")
 ### assign papers and keywords to topics for all crops and all models
 
 topic_assign_all <- rep(list(), length(all_topics))
